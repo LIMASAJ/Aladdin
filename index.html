@@ -1,609 +1,616 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>✨ ALADDIN: THE THREE WISHES</title>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;800;900&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>REGRETOS // The Most Unnecessary Decision System Ever Created</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pink:#ff2fd4;
+    --purple:#9b30ff;
+    --blue:#2f7bff;
+    --cyan:#28f5ff;
+    --green:#3dff8a;
+    --bg:#040106;
+    --panel:#0b0512;
+    --white:#f4f4ff;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%; background:var(--bg); color:var(--white); font-family:'Share Tech Mono', monospace; overflow-x:hidden;}
+  h1,h2,h3,.title-font{font-family:'Orbitron', sans-serif;}
 
-  <style>
-    body {
-      background: radial-gradient(circle at 50% 35%, #250946 0%, #0d041c 65%, #030107 100%);
-      font-family: 'Quicksand', sans-serif;
-      overflow: hidden;
-    }
-    .font-royal { font-family: 'Cinzel Decorative', 'Cinzel', serif; }
-    
-    .gold-glow {
-      text-shadow: 0 0 16px rgba(245, 176, 65, 0.8), 0 0 32px rgba(245, 176, 65, 0.4);
-    }
-    .cyan-glow {
-      filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.75)) drop-shadow(0 0 50px rgba(56, 189, 248, 0.4));
-    }
-    
-    /* Royal Palace Outer Frame */
-    .palace-arch {
-      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.95), inset 0 0 25px rgba(245, 176, 65, 0.35);
-      border: 3px double rgba(245, 176, 65, 0.45);
-    }
+  .grid-bg{
+    position:fixed; inset:0; z-index:0;
+    background-image:
+      linear-gradient(rgba(155,48,255,0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(40,245,255,0.12) 1px, transparent 1px);
+    background-size:40px 40px;
+    animation:gridMove 12s linear infinite;
+  }
+  @keyframes gridMove{from{background-position:0 0;} to{background-position:40px 40px;}}
+  .scanlines{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:repeating-linear-gradient(to bottom, rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 1px, transparent 2px, transparent 4px);
+    animation:scanShift 6s linear infinite;
+  }
+  @keyframes scanShift{from{background-position:0 0;} to{background-position:0 40px;}}
+  #particles{position:fixed; inset:0; z-index:1; pointer-events:none; overflow:hidden;}
+  .particle{position:absolute; border-radius:50%; background:var(--cyan); box-shadow:0 0 8px var(--cyan); opacity:0.7; animation:floatUp linear infinite;}
+  @keyframes floatUp{from{transform:translateY(0) translateX(0); opacity:0.8;} to{transform:translateY(-110vh) translateX(20px); opacity:0;}}
 
-    /* Idle Bouncy Float Animation */
-    @keyframes genieShowmanFloat {
-      0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-      25% { transform: translateY(-16px) rotate(2deg) scale(1.02); }
-      50% { transform: translateY(-6px) rotate(-1.5deg) scale(0.99); }
-      75% { transform: translateY(-20px) rotate(2.2deg) scale(1.03); }
-    }
-    .genie-idle {
-      animation: genieShowmanFloat 4.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
-    }
+  .wrap{position:relative; z-index:2; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px;}
 
-    /* Active Speech Gestures & Body Movement */
-    @keyframes talkingBounce {
-      0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); }
-      20% { transform: translateY(-14px) scale(1.06) rotate(3deg); }
-      40% { transform: translateY(-5px) scale(1.02) rotate(-2deg); }
-      60% { transform: translateY(-18px) scale(1.08) rotate(4deg); }
-      80% { transform: translateY(-7px) scale(1.03) rotate(-1deg); }
-    }
-    .genie-talking {
-      animation: talkingBounce 0.65s ease-in-out infinite !important;
-    }
+  .screen{display:none; width:100%; max-width:860px; animation:fadeIn .5s ease;}
+  .screen.active{display:block;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(15px);} to{opacity:1; transform:translateY(0);}}
 
-    /* Pop out from Lamp Spout Animation */
-    @keyframes eruptFromSpout {
-      0% { 
-        transform: translate(110px, 140px) scale(0.01) rotate(-55deg); 
-        opacity: 0; 
-        filter: blur(18px) brightness(3);
-      }
-      35% { 
-        transform: translate(60px, 40px) scale(0.35) rotate(20deg); 
-        opacity: 0.85; 
-        filter: blur(8px) brightness(2);
-      }
-      70% { 
-        transform: translate(0px, -35px) scale(1.18) rotate(-6deg); 
-        opacity: 1; 
-        filter: blur(0px) brightness(1.2);
-      }
-      85% { 
-        transform: translate(0px, 10px) scale(0.96) rotate(3deg); 
-      }
-      100% { 
-        transform: translate(0px, 0px) scale(1) rotate(0deg); 
-        opacity: 1;
-        filter: blur(0px) brightness(1);
-      }
-    }
-    .erupting {
-      animation: eruptFromSpout 2.8s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
-    }
-  </style>
+  #screen-landing{text-align:center;}
+  .logo-title{
+    font-size:clamp(2.8rem, 9vw, 6rem); font-weight:900; letter-spacing:6px; color:var(--white);
+    text-shadow:0 0 10px var(--pink), 0 0 25px var(--purple), 0 0 55px var(--blue);
+    animation:flicker 3.5s infinite;
+  }
+  @keyframes flicker{0%,19%,21%,23%,80%,100%{opacity:1;} 20%,22%{opacity:0.75;}}
+  .tagline{margin-top:14px; color:var(--cyan); font-size:1.05rem; letter-spacing:2px; text-shadow:0 0 8px var(--cyan);}
+  .subtext{margin-top:20px; color:#c9c9e8; font-size:0.95rem;}
+  .subtext2{margin-top:8px; color:var(--green); font-size:0.9rem; text-shadow:0 0 6px var(--green);}
+
+  .glow-btn{
+    margin-top:36px; padding:16px 42px; font-family:'Orbitron', sans-serif; font-size:1.1rem; font-weight:700; letter-spacing:2px;
+    color:var(--bg); background:linear-gradient(90deg, var(--cyan), var(--pink)); border:none; border-radius:6px; cursor:pointer;
+    box-shadow:0 0 15px var(--pink), 0 0 35px var(--purple); transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .glow-btn:hover{transform:scale(1.05); box-shadow:0 0 25px var(--cyan), 0 0 55px var(--pink);}
+  .glow-btn.secondary{background:linear-gradient(90deg, var(--purple), var(--blue)); color:var(--white); margin-top:18px; font-size:0.9rem; padding:11px 22px;}
+  .glow-btn.small{font-size:0.8rem; padding:9px 18px; margin-top:14px;}
+
+  .status-lines{
+    margin-top:44px; font-size:0.85rem; line-height:1.9; text-align:left; display:inline-block;
+    border:1px solid var(--purple); padding:14px 22px; border-radius:6px; background:rgba(155,48,255,0.06);
+    box-shadow:0 0 12px rgba(155,48,255,0.35) inset;
+  }
+  .status-lines span.ok{color:var(--green); text-shadow:0 0 6px var(--green);}
+  .status-lines span.bad{color:var(--pink); text-shadow:0 0 6px var(--pink);}
+  .status-lines span.ready{color:var(--cyan); text-shadow:0 0 6px var(--cyan);}
+
+  #screen-boot, #screen-consulting{text-align:left; font-size:1rem; line-height:2.1; color:var(--green); text-shadow:0 0 6px var(--green); min-height:220px;}
+  #screen-consulting{color:var(--cyan); text-shadow:0 0 6px var(--cyan);}
+  .cursor{display:inline-block; width:9px; height:16px; background:currentColor; margin-left:4px; animation:blink 1s steps(1) infinite; vertical-align:middle;}
+  @keyframes blink{50%{opacity:0;}}
+  .percent-counter{margin-top:18px; font-size:2.2rem; font-family:'Orbitron', sans-serif; text-align:center;}
+
+  .panel{
+    background:var(--panel); border:1px solid var(--blue); border-radius:10px; padding:26px 24px;
+    box-shadow:0 0 20px rgba(47,123,255,0.35), 0 0 40px rgba(255,47,212,0.08) inset; margin-bottom:24px;
+  }
+  .panel h2{font-size:1.5rem; color:var(--white); text-shadow:0 0 10px var(--pink); margin-bottom:6px;}
+  .panel .sub{color:var(--cyan); font-size:0.88rem; margin-bottom:16px;}
+
+  label{display:block; font-size:0.85rem; letter-spacing:1px; color:var(--green); margin-bottom:6px; margin-top:16px; text-shadow:0 0 5px var(--green);}
+  input[type="text"]{
+    width:100%; padding:12px 14px; background:#0d0716; border:1px solid var(--purple); border-radius:6px; color:var(--white);
+    font-family:'Share Tech Mono', monospace; font-size:1rem; outline:none; transition:box-shadow .2s ease, border-color .2s ease;
+  }
+  input[type="text"]:focus{border-color:var(--cyan); box-shadow:0 0 12px var(--cyan);}
+
+  .center{text-align:center;}
+  .small-note{font-size:0.78rem; color:#9d9dc7; margin-top:10px;}
+
+  .score-wrap{text-align:center; margin:18px 0 8px;}
+  .score-num{font-size:4.2rem; font-weight:900; color:var(--white); text-shadow:0 0 16px var(--pink), 0 0 40px var(--purple);}
+  .score-num span{font-size:1.6rem; color:#c9c9e8;}
+  .meter-outer{width:100%; height:16px; background:#150a22; border-radius:10px; overflow:hidden; border:1px solid var(--purple); margin-top:14px;}
+  .meter-inner{height:100%; width:0%; border-radius:10px; background:linear-gradient(90deg, var(--green), var(--cyan), var(--pink)); box-shadow:0 0 12px var(--pink); transition:width 1.1s ease;}
+  .classification{margin-top:18px; font-size:1.3rem; font-family:'Orbitron', sans-serif; color:var(--cyan); text-shadow:0 0 10px var(--cyan);}
+
+  .verdict-box{text-align:center;}
+  .verdict-choice{font-size:1.5rem; font-family:'Orbitron', sans-serif; color:var(--green); text-shadow:0 0 12px var(--green); margin:10px 0; line-height:1.4;}
+
+  .third-option-text{
+    font-size:1.1rem; color:var(--white); background:rgba(47,123,255,0.08); border:1px dashed var(--blue); border-radius:8px;
+    padding:16px; text-align:center; margin-bottom:14px; min-height:60px; display:flex; align-items:center; justify-content:center;
+  }
+
+  .universe-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:640px){.universe-grid{grid-template-columns:1fr;} .forecast-grid{grid-template-columns:1fr 1fr !important;}}
+  .universe-card{border:1px solid var(--pink); border-radius:8px; padding:14px; background:rgba(255,47,212,0.05); box-shadow:0 0 10px rgba(255,47,212,0.25);}
+  .universe-card h3{font-size:0.9rem; color:var(--pink); text-shadow:0 0 6px var(--pink); margin-bottom:8px; letter-spacing:1px;}
+  .universe-card p{font-size:0.9rem; color:var(--white); line-height:1.5;}
+
+  .btn-row{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:8px;}
+
+  .stat-box{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+    border:1px solid var(--green); border-radius:8px; padding:14px 18px; background:rgba(61,255,138,0.05);
+    box-shadow:0 0 10px rgba(61,255,138,0.25); margin-bottom:22px;
+  }
+  .stat-box .label{font-size:0.78rem; color:var(--green); letter-spacing:1px;}
+  .stat-box .value{font-size:1.3rem; font-family:'Orbitron', sans-serif; color:var(--white); text-shadow:0 0 8px var(--green);}
+
+  .blame-text{
+    font-size:1.05rem; color:var(--white); text-align:center; min-height:40px; display:flex; align-items:center; justify-content:center;
+    background:rgba(155,48,255,0.08); border:1px dashed var(--purple); border-radius:8px; padding:14px; margin-bottom:6px;
+  }
+
+  .forecast-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-top:10px;}
+  .forecast-day{
+    text-align:center; border:1px solid var(--cyan); border-radius:8px; padding:10px 6px; background:rgba(40,245,255,0.06);
+  }
+  .forecast-day .d{font-size:0.72rem; color:var(--cyan); letter-spacing:1px;}
+  .forecast-day .p{font-size:1.3rem; font-family:'Orbitron', sans-serif; color:var(--white); margin:4px 0;}
+  .forecast-day .desc{font-size:0.68rem; color:#c9c9e8; line-height:1.3;}
+
+  .overthink-label{text-align:center; font-size:1.15rem; font-family:'Orbitron', sans-serif; margin-top:10px; text-shadow:0 0 8px currentColor;}
+
+  .cert{
+    border:2px solid var(--cyan); border-radius:10px; padding:28px; text-align:center;
+    background:radial-gradient(circle at center, rgba(40,245,255,0.07), transparent 70%);
+    box-shadow:0 0 20px rgba(40,245,255,0.3) inset;
+  }
+  .cert .cert-title{font-family:'Orbitron', sans-serif; font-size:1.1rem; letter-spacing:3px; color:var(--cyan); text-shadow:0 0 10px var(--cyan);}
+  .cert .cert-seal{
+    width:70px; height:70px; border-radius:50%; border:2px dashed var(--pink); margin:16px auto; display:flex; align-items:center; justify-content:center;
+    font-size:0.6rem; color:var(--pink); text-align:center; padding:6px; text-shadow:0 0 6px var(--pink);
+  }
+  .cert .cert-decision{font-size:1.2rem; color:var(--white); margin:14px 0 6px; font-style:italic;}
+  .cert .cert-line{font-size:0.85rem; color:#c9c9e8; margin:4px 0;}
+  .cert .cert-id{font-size:0.72rem; color:#7a7aa0; margin-top:14px; letter-spacing:1px;}
+
+  footer{margin-top:6px; text-align:center; font-size:0.75rem; color:#7a7aa0; letter-spacing:1px;}
+
+  @media print{
+    body *{visibility:hidden;}
+    #screen-result .cert, #screen-result .cert *{visibility:visible;}
+    #screen-result .cert{position:absolute; top:0; left:0; width:100%;}
+  }
+</style>
 </head>
+<body>
 
-<body class="w-screen h-screen flex flex-col justify-between p-4 md:p-6 text-slate-100 select-none palace-arch relative">
-  <!-- Arabian Night Sky & Particle Sparkle Canvases -->
-  <canvas id="skyCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
-  <canvas id="sparkleCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-30"></canvas>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<div id="particles"></div>
 
-  <!-- TOP ROYAL HEADER -->
-  <header class="relative z-20 flex items-center justify-between w-full max-w-5xl mx-auto border-b border-amber-500/30 pb-3">
-    <div>
-      <h1 class="font-royal text-xl md:text-3xl font-black text-amber-300 gold-glow tracking-widest flex items-center gap-2">
-        👑 ALADDIN <span class="text-xs md:text-sm text-amber-200/80 font-normal font-sans">THE THREE WISHES</span>
-      </h1>
-      <p class="text-[10px] md:text-xs text-amber-300/60 uppercase tracking-widest mt-0.5">The Spectacular Cave of Wonders</p>
+<div class="wrap">
+
+  <section id="screen-landing" class="screen active">
+    <h1 class="logo-title">REGRETOS</h1>
+    <p class="tagline">THE MOST UNNECESSARY DECISION SYSTEM EVER CREATED</p>
+    <p class="subtext">"Why make a simple decision when you can overthink it scientifically?"</p>
+    <p class="subtext2">100% USELESS. 100% FREE. 0% LOGIN REQUIRED.</p>
+    <button class="glow-btn" onclick="playBeep(880); startBoot()">[ ENTER REGRETOS ]</button>
+    <div class="status-lines">
+      SYSTEM STATUS: <span class="ok">ONLINE</span><br/>
+      COMMON SENSE: <span class="bad">OFFLINE</span><br/>
+      REGRET ENGINE: <span class="ready">READY</span>
     </div>
+  </section>
 
-    <div class="flex items-center gap-3">
-      <div id="moodBadge" class="hidden px-4 py-1.5 rounded-full bg-black/70 border border-amber-400/50 text-xs font-royal text-amber-300 shadow-[0_0_15px_rgba(245,176,65,0.35)] flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-        MOOD: <span id="moodText" class="font-bold">PARTY TIME 🎉</span>
-      </div>
-      <button id="muteBtn" onclick="toggleMute()" class="p-2.5 rounded-full bg-black/70 border border-amber-400/50 text-amber-300 hover:bg-amber-400 hover:text-black transition-all shadow-md">
-        🔊
-      </button>
-    </div>
-  </header>
+  <section id="screen-boot" class="screen">
+    <div id="boot-lines"></div>
+  </section>
 
-  <!-- CENTER ARENA: LAMP & GENIE STAGE -->
-  <main class="relative z-10 flex-1 flex flex-col md:flex-row items-center justify-center gap-8 max-w-5xl mx-auto w-full">
-    <!-- Royal Wishes Scroll -->
-    <div id="wishPanel" class="hidden w-full md:w-80 bg-black/75 backdrop-blur-xl border-2 border-amber-500/40 rounded-3xl p-5 shadow-[0_0_35px_rgba(0,0,0,0.85)]">
-      <div class="flex justify-between items-center mb-3 pb-2 border-b border-amber-500/30">
-        <span class="font-royal text-sm font-bold text-amber-300 tracking-wider">📜 YOUR 3 WISHES</span>
-        <span id="wishCounter" class="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-200 border border-amber-400/40 font-bold">0/3</span>
-      </div>
-
-      <div class="space-y-2.5 text-xs" id="wishList">
-        <div id="slot1" class="p-3 rounded-2xl border border-amber-400/50 bg-amber-400/10 text-amber-200 font-medium">✨ Wish #1 — HIT ME WITH YOUR BEST SHOT!</div>
-        <div id="slot2" class="p-3 rounded-2xl border border-slate-700/60 bg-slate-900/40 opacity-50 text-slate-400">🔒 Wish #2 — LOCKED IN THE VAULT</div>
-        <div id="slot3" class="p-3 rounded-2xl border border-slate-700/60 bg-slate-900/40 opacity-50 text-slate-400">🔒 Wish #3 — THE GRAND FINALE</div>
-      </div>
-
-      <!-- Comedic "What you could have wished for" box -->
-      <div id="altBox" class="hidden mt-4 p-3.5 rounded-2xl bg-gradient-to-br from-purple-950/70 to-indigo-950/50 border border-purple-400/40 text-[11px] text-purple-200 shadow-inner">
-        <div class="font-bold text-amber-300 font-royal mb-1.5 flex items-center gap-1.5">
-          <span>🧞‍♂️</span> WHAT YOU COULD'VE HAD, KID:
-        </div>
-        <ul id="altList" class="list-disc list-inside text-slate-200 space-y-1 italic"></ul>
+  <section id="screen-terminal" class="screen">
+    <div class="panel">
+      <h2>REGRET TERMINAL</h2>
+      <p class="sub">Enter a decision. We will make it unnecessarily complicated.</p>
+      <label>WHAT IS THE DECISION?</label>
+      <input type="text" id="decisionInput" placeholder="Should I text them back right now?" />
+      <div class="center">
+        <button class="glow-btn" onclick="playBeep(660); startConsulting()">CALCULATE MY REGRET</button>
+        <p class="small-note">No data is saved. No data is sent anywhere. It just disappears into the void, like your motivation.</p>
       </div>
     </div>
+  </section>
 
-    <!-- Center Stage: Lamp & Erupting Genie -->
-    <div id="stageContainer" class="flex flex-col items-center justify-center relative min-h-[440px]">
-      <!-- Rub Instruction & Progress Bar -->
-      <div id="rubInstructions" class="text-center mb-4">
-        <p class="font-royal text-2xl md:text-3xl text-amber-300 gold-glow font-bold animate-pulse">
-          Rub the lamp to awaken the Genie!
-        </p>
-        <p class="text-xs md:text-sm text-amber-200/80 mt-1">Rub back and forth with mouse or finger — wake him up!</p>
-        
-        <div class="w-72 h-3.5 bg-black/85 border border-amber-500/60 rounded-full mx-auto mt-4 overflow-hidden shadow-[0_0_15px_rgba(245,176,65,0.4)] p-0.5">
-          <div id="rubBar" class="h-full rounded-full bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-200 transition-all duration-100" style="width: 0%"></div>
-        </div>
-      </div>
+  <section id="screen-consulting" class="screen">
+    <div id="consulting-lines"></div>
+    <div class="percent-counter" id="consultingPercent">0%</div>
+  </section>
 
-      <!-- LAMP WRAPPER WITH INLINE EMBEDDED IMAGE -->
-      <div id="lampWrapper" class="cursor-grab active:cursor-grabbing relative transition-all duration-700 flex items-center justify-center min-w-[320px] min-h-[220px]">
-        <img 
-          id="lampImg"
-          src="lamp_2.png" 
-          alt="Golden Arabian Magic Lamp"
-          onerror="this.onerror=null; this.src='lamp.png'; if(!this.complete) this.src='https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8xNV8zZF9pbGx1c3RyYXRpb25fb2ZfYV9nb2xkZW5fbWFnaWNfbGFtcF9pc29sYXRlX2U0MGJmNjE0LTVmNTMtNGQwNS1iYjA5LTg4NDRhYzYxYTUyMS5wbmc.png';"
-          class="w-80 md:w-[400px] h-auto drop-shadow-[0_0_35px_rgba(245,176,65,0.85)] transition-transform duration-150 pointer-events-none select-none"
-        />
-        <!-- Spout anchor point for smoke & sparkles -->
-        <div id="spoutPoint" class="absolute top-8 right-6 w-8 h-8 pointer-events-none"></div>
-      </div>
+  <section id="screen-result" class="screen">
 
-      <!-- GENIE CHARACTER WITH INLINE EMBEDDED IMAGE -->
-      <div id="genieContainer" class="hidden flex-col items-center absolute -top-16 z-20 pointer-events-none">
-        <div id="genieSprite" class="relative genie-idle transition-transform duration-300">
-          <div class="absolute inset-0 rounded-full bg-gradient-to-t from-cyan-500/50 via-blue-500/30 to-amber-300/40 blur-3xl -z-10 animate-pulse"></div>
-          <img 
-            id="genieImg"
-            src="genie_2.png" 
-            alt="Fun-Loving Genie" 
-            onerror="this.onerror=null; this.src='genie.png'; if(!this.complete) this.src='https://cdn-icons-png.flaticon.com/512/3504/3504245.png';"
-            class="w-80 md:w-[420px] max-h-[480px] object-contain cyan-glow select-none pointer-events-none"
-          />
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- BOTTOM ROYAL SUBTITLES & CONTROLS -->
-  <footer class="relative z-20 flex flex-col items-center gap-3 w-full max-w-2xl mx-auto">
-    <!-- Subtitles -->
-    <div id="subtitles" class="w-full bg-black/85 backdrop-blur-md border border-amber-500/50 rounded-2xl p-3.5 text-center text-sm md:text-base text-amber-100 italic min-h-[54px] flex items-center justify-center shadow-[0_0_25px_rgba(0,0,0,0.85)] font-medium">
-      "Rub that golden kettle above to start the show!"
+    <div class="stat-box">
+      <div><div class="label">DECISIONS OVERTHOUGHT THIS SESSION</div><div class="value" id="sessionCountDisplay">0</div></div>
+      <div><div class="label">TOTAL TIME WASTED ON THIS DECISION</div><div class="value" id="timeWasted">00:00</div></div>
     </div>
 
-    <!-- Voice / Text Input -->
-    <form id="inputForm" onsubmit="handleSend(event)" class="hidden w-full items-center gap-2 bg-black/95 border-2 border-amber-500/60 rounded-full p-2 pl-4 shadow-2xl">
-      <button type="button" id="micBtn" onclick="toggleMic()" class="p-3 rounded-full bg-amber-500/20 text-amber-300 hover:bg-amber-400 hover:text-black transition-all">
-        🎙️
-      </button>
-      <input type="text" id="userInput" placeholder="Tell the Genie your wildest wish..." class="flex-1 bg-transparent border-none outline-none text-sm text-slate-100 placeholder-amber-200/40 font-medium" />
-      <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-300 text-slate-950 font-royal font-black rounded-full hover:brightness-110 active:scale-95 transition-all shadow-lg">
-        BOOM! ✨
-      </button>
-    </form>
-  </footer>
-
-  <!-- FINAL JUDGMENT MODAL -->
-  <div id="judgmentModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-2xl">
-    <div class="bg-gradient-to-b from-slate-950 via-[#190733] to-black border-2 border-amber-400 rounded-3xl p-6 md:p-8 max-w-lg w-full text-center shadow-[0_0_65px_rgba(245,176,65,0.45)]">
-      <div class="text-6xl mb-2 animate-bounce">👑</div>
-      <h2 class="font-royal text-2xl md:text-3xl font-bold text-amber-300 tracking-wider">THE GRAND GENIE VERDICT!</h2>
-      <div id="verdictTag" class="inline-block my-4 px-6 py-2 rounded-full bg-amber-400/20 border-2 border-amber-400 text-amber-300 font-royal font-black text-xl md:text-2xl shadow-lg"></div>
-      <p id="verdictSpeech" class="text-xs md:text-sm text-amber-100/95 italic mb-5 leading-relaxed"></p>
-
-      <div id="statsBox" class="space-y-2 text-left bg-black/60 p-4 rounded-2xl border border-amber-500/30 mb-6 text-xs text-amber-200 font-semibold"></div>
-
-      <button onclick="location.reload()" class="px-8 py-3 bg-gradient-to-r from-amber-500 via-yellow-300 to-amber-400 text-slate-950 font-royal font-black rounded-full shadow-[0_0_25px_rgba(245,176,65,0.6)] hover:scale-105 active:scale-95 transition-all">
-        🔮 ONE MORE ROUND! RUB AGAIN!
-      </button>
+    <div class="panel">
+      <h2>YOUR REGRET SCORE</h2>
+      <div class="score-wrap">
+        <div class="score-num" id="scoreNum">0<span>/100</span></div>
+        <div class="meter-outer"><div class="meter-inner" id="meterBar"></div></div>
+        <div class="classification" id="classificationText"></div>
+      </div>
     </div>
-  </div>
 
-  <script>
-    // 1. Sky Canvas
-    const skyCanvas = document.getElementById('skyCanvas');
-    const skyCtx = skyCanvas.getContext('2d');
-    function resizeSky() { skyCanvas.width = window.innerWidth; skyCanvas.height = window.innerHeight; }
-    resizeSky();
-    window.addEventListener('resize', resizeSky);
+    <div class="panel">
+      <h2>OVERTHINKING METER</h2>
+      <p class="sub">An entirely separate, equally unscientific measurement.</p>
+      <div class="meter-outer"><div class="meter-inner" id="overthinkBar"></div></div>
+      <div class="overthink-label" id="overthinkLabel"></div>
+    </div>
 
-    const stars = Array.from({ length: 90 }, () => ({
-      x: Math.random() * skyCanvas.width, y: Math.random() * (skyCanvas.height * 0.75),
-      r: Math.random() * 2 + 0.5, alpha: Math.random()
-    }));
+    <div class="panel verdict-box">
+      <h2>REGRETOS HAS DECIDED...</h2>
+      <div class="verdict-choice" id="verdictChoice"></div>
+      <p class="small-note">"Do we know why? Absolutely not."</p>
+      <button class="glow-btn secondary" onclick="playBeep(440); reRollVerdict()">[ I DON'T TRUST THIS ]</button>
+    </div>
 
-    function drawSky() {
-      skyCtx.clearRect(0, 0, skyCanvas.width, skyCanvas.height);
-      const mx = skyCanvas.width * 0.86, my = skyCanvas.height * 0.16;
-      skyCtx.save(); skyCtx.shadowColor = '#ffe082'; skyCtx.shadowBlur = 40;
-      skyCtx.beginPath(); skyCtx.arc(mx, my, 40, 0, Math.PI * 2); skyCtx.fillStyle = '#fffde7'; skyCtx.fill();
-      skyCtx.globalCompositeOperation = 'destination-out';
-      skyCtx.beginPath(); skyCtx.arc(mx + 15, my - 10, 35, 0, Math.PI * 2); skyCtx.fill();
-      skyCtx.restore();
+    <div class="panel">
+      <h2>WAIT.</h2>
+      <p class="sub">WHAT IF WE CHOOSE NEITHER?</p>
+      <div class="third-option-text" id="thirdOptionText"></div>
+      <div class="center"><button class="glow-btn secondary" onclick="playBeep(520); newThirdOption()">[ GIVE ME ANOTHER BAD OPTION ]</button></div>
+    </div>
 
-      stars.forEach(s => {
-        s.alpha += (Math.random() - 0.5) * 0.04;
-        s.alpha = Math.max(0.15, Math.min(1, s.alpha));
-        skyCtx.fillStyle = `rgba(255, 235, 170, ${s.alpha})`;
-        skyCtx.beginPath(); skyCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2); skyCtx.fill();
-      });
-      requestAnimationFrame(drawSky);
+    <div class="panel">
+      <h2>ALTERNATE UNIVERSE SIMULATOR</h2>
+      <div class="universe-grid">
+        <div class="universe-card"><h3>UNIVERSE A &mdash; YOU GO THROUGH WITH IT</h3><p id="universeA"></p></div>
+        <div class="universe-card"><h3>UNIVERSE B &mdash; YOU DON'T</h3><p id="universeB"></p></div>
+      </div>
+      <div class="center btn-row"><button class="glow-btn secondary" onclick="playBeep(700); reRollUniverses()">[ REROLL THE MULTIVERSE ]</button></div>
+    </div>
+
+    <div class="panel">
+      <h2>BLAME ASSIGNMENT MODULE</h2>
+      <p class="sub">Somebody has to be responsible for this. It will not be you.</p>
+      <div class="blame-text" id="blameText"></div>
+      <div class="center"><button class="glow-btn secondary" onclick="playBeep(390); newBlame()">[ FIND SOMEONE ELSE TO BLAME ]</button></div>
+    </div>
+
+    <div class="panel">
+      <h2>5-DAY REGRET FORECAST</h2>
+      <p class="sub">Meteorologically inaccurate. Emotionally, unfortunately accurate.</p>
+      <div class="forecast-grid" id="forecastGrid"></div>
+    </div>
+
+    <div class="panel">
+      <h2>OFFICIAL CERTIFICATE OF REGRET</h2>
+      <div class="cert" id="certificate">
+        <div class="cert-title">MINISTRY OF OVERTHINKING</div>
+        <div class="cert-seal">CERTIFIED<br/>USELESS</div>
+        <div class="cert-decision" id="certDecision"></div>
+        <div class="cert-line" id="certScore"></div>
+        <div class="cert-line" id="certVerdict"></div>
+        <div class="cert-line" id="certDate"></div>
+        <div class="cert-id" id="certId"></div>
+      </div>
+      <div class="center"><button class="glow-btn small" onclick="playBeep(900); window.print()">[ PRINT CERTIFICATE ]</button></div>
+    </div>
+
+    <div class="center btn-row">
+      <button class="glow-btn" onclick="playBeep(880); resetToTerminal()">MAKE ANOTHER REGRETFUL DECISION</button>
+    </div>
+
+    <footer>REGRETOS &mdash; built for a good time, not a long time. TinkerHub Useless Project Hackathon.</footer>
+  </section>
+
+</div>
+
+<script>
+/* ============ PARTICLES ============ */
+(function spawnParticles(){
+  const container = document.getElementById('particles');
+  const colors = ['#ff2fd4','#28f5ff','#3dff8a','#9b30ff'];
+  for(let i=0;i<35;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random()*3 + 1.5;
+    p.style.width = size+'px';
+    p.style.height = size+'px';
+    p.style.left = Math.random()*100+'vw';
+    p.style.top = (100 + Math.random()*20)+'vh';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDuration = (6 + Math.random()*8)+'s';
+    p.style.animationDelay = (Math.random()*8)+'s';
+    container.appendChild(p);
+  }
+})();
+
+/* ============ BEEP SOUND (Web Audio, no files needed) ============ */
+let audioCtx = null;
+function playBeep(freq){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.value = freq || 600;
+    gain.gain.value = 0.04;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.12);
+    osc.stop(audioCtx.currentTime + 0.13);
+  }catch(e){ /* audio not available, that's fine */ }
+}
+
+/* ============ SCREEN NAVIGATION ============ */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ============ BOOT SEQUENCE ============ */
+const bootMessages = [
+  "BOOTING REGRETOS...",
+  "Checking decision...",
+  "Loading second thoughts...",
+  "Searching for unnecessary alternatives...",
+  "Consulting absolutely nobody...",
+  "Regret engine ready."
+];
+function startBoot(){
+  showScreen('screen-boot');
+  const bootEl = document.getElementById('boot-lines');
+  bootEl.innerHTML = '';
+  let i = 0;
+  function nextLine(){
+    if(i < bootMessages.length){
+      const line = document.createElement('div');
+      line.textContent = "> " + bootMessages[i];
+      bootEl.appendChild(line);
+      i++;
+      setTimeout(nextLine, 420);
+    } else {
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      bootEl.appendChild(cursor);
+      setTimeout(() => showScreen('screen-terminal'), 650);
     }
-    drawSky();
+  }
+  nextLine();
+}
 
-    // 2. High-Energy Sparkle & Spout Explosion Engine
-    const spCanvas = document.getElementById('sparkleCanvas');
-    const spCtx = spCanvas.getContext('2d');
-    function resizeSp() { spCanvas.width = window.innerWidth; spCanvas.height = window.innerHeight; }
-    resizeSp();
-    window.addEventListener('resize', resizeSp);
+/* ============ FAKE "AI CONSULTING" LOADING ============ */
+const consultMessages = [
+  "Consulting the Regret Neural Network...",
+  "Cross-referencing your bad decisions database...",
+  "Calculating hesitation coefficients...",
+  "Overthinking in progress...",
+  "Asking the universe (still no answer)...",
+  "Finalizing unnecessary complexity..."
+];
+function startConsulting(){
+  showScreen('screen-consulting');
+  const el = document.getElementById('consulting-lines');
+  const pctEl = document.getElementById('consultingPercent');
+  el.innerHTML = '';
+  pctEl.textContent = '0%';
+  let i = 0;
+  let fakePct = 0;
 
-    let sparkles = [];
-    function emitSpoutSparkles(count = 5, isBurst = false) {
-      const spout = document.getElementById('spoutPoint').getBoundingClientRect();
-      const originX = spout.left + spout.width / 2;
-      const originY = spout.top + spout.height / 2;
+  const pctInterval = setInterval(() => {
+    fakePct = Math.min(100, fakePct + Math.floor(Math.random()*22));
+    if(Math.random() < 0.2) fakePct = Math.max(0, fakePct - Math.floor(Math.random()*15));
+    pctEl.textContent = fakePct + '%';
+  }, 220);
 
-      for (let i = 0; i < count; i++) {
-        sparkles.push({
-          x: originX + (Math.random() - 0.5) * 16,
-          y: originY + (Math.random() - 0.5) * 16,
-          vx: isBurst ? (Math.random() - 0.5) * 20 : (Math.random() - 0.3) * 7,
-          vy: isBurst ? -Math.random() * 18 - 4 : -Math.random() * 8 - 3,
-          size: Math.random() * 4.5 + 2,
-          color: Math.random() > 0.4 ? '#fcd34d' : '#38bdf8',
-          life: 1,
-          decay: Math.random() * 0.02 + 0.015
-        });
-      }
+  function nextLine(){
+    if(i < consultMessages.length){
+      const line = document.createElement('div');
+      line.textContent = "> " + consultMessages[i];
+      el.appendChild(line);
+      i++;
+      setTimeout(nextLine, 380);
+    } else {
+      clearInterval(pctInterval);
+      pctEl.textContent = '100%';
+      setTimeout(calculateRegret, 400);
     }
+  }
+  nextLine();
+}
 
-    function renderSparkles() {
-      spCtx.clearRect(0, 0, spCanvas.width, spCanvas.height);
-      for (let i = sparkles.length - 1; i >= 0; i--) {
-        const p = sparkles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.15;
-        p.life -= p.decay;
+/* ============ SESSION STATE ============ */
+let decisionsThisSession = 0;
+let currentDecision = "an important life decision";
+let timeWastedInterval = null;
+let decisionStartTime = null;
 
-        if (p.life <= 0) {
-          sparkles.splice(i, 1);
-          continue;
-        }
+/* ============ REGRET CALCULATOR (simple, beginner-friendly) ============ */
+const trigger_words = ["ex","boss","love","money","exam","crush","text","mom","dad","diet"];
 
-        spCtx.save();
-        spCtx.globalAlpha = p.life;
-        spCtx.shadowColor = p.color;
-        spCtx.shadowBlur = 12;
-        spCtx.fillStyle = p.color;
+function calculateRegretScore(decisionText){
+  let score = 0;
+  score += decisionText.length * 1.1;          // longer overthinking = more regret
+  score += Math.floor(Math.random() * 30);      // random factor, because life is random
 
-        spCtx.beginPath();
-        spCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        spCtx.fill();
-        spCtx.restore();
-      }
-      requestAnimationFrame(renderSparkles);
-    }
-    renderSparkles();
+  const lower = decisionText.toLowerCase();
+  trigger_words.forEach(word => { if(lower.includes(word)) score += 12; });
 
-    // 3. Web Audio Fanfare & SFX
-    let audioCtx = null;
-    let muted = false;
-    function initAudio() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
-    
-    function playRubSound(prog) {
-      if (muted) return;
-      initAudio();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(220 + prog * 4.5, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-      osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-    }
+  score += decisionsThisSession * 4;            // more decisions this session = more chaotic you clearly are
 
-    function playEmergenceFanfare() {
-      if (muted) return;
-      initAudio();
-      const fanfare = [
-        { f: 146.83, t: 0.0, d: 2.5 },
-        { f: 293.66, t: 0.2, d: 0.4 },
-        { f: 311.13, t: 0.6, d: 0.4 },
-        { f: 369.99, t: 1.0, d: 0.6 },
-        { f: 440.00, t: 1.6, d: 0.8 },
-        { f: 587.33, t: 2.4, d: 1.2 },
-        { f: 739.99, t: 3.4, d: 1.6 }
-      ];
+  score = Math.round(score);
+  if(score > 100) score = 100;
+  if(score < 0) score = 0;
+  return score;
+}
 
-      fanfare.forEach(note => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(note.f, audioCtx.currentTime + note.t);
+function classifyScore(score){
+  if(score <= 20) return "YOU'RE FINE.";
+  if(score <= 40) return "MILD REGRET.";
+  if(score <= 60) return "SECOND THOUGHTS DETECTED.";
+  if(score <= 80) return "SERIOUS OVERTHINKING.";
+  if(score <= 95) return "EXTREME REGRET.";
+  return "WHY DID YOU ASK US?";
+}
 
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(1200, audioCtx.currentTime);
+function calculateRegret(){
+  const decisionText = document.getElementById('decisionInput').value.trim() || "an important life decision";
+  currentDecision = decisionText;
+  decisionsThisSession++;
+  document.getElementById('sessionCountDisplay').textContent = decisionsThisSession;
 
-        gain.gain.setValueAtTime(0.12, audioCtx.currentTime + note.t);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + note.t + note.d);
+  const score = calculateRegretScore(decisionText);
+  document.getElementById('scoreNum').innerHTML = score + '<span>/100</span>';
+  document.getElementById('classificationText').textContent = classifyScore(score);
 
-        osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(audioCtx.currentTime + note.t);
-        osc.stop(audioCtx.currentTime + note.t + note.d + 0.1);
-      });
-    }
+  const meter = document.getElementById('meterBar');
+  meter.style.width = '0%';
+  setTimeout(() => { meter.style.width = score + '%'; }, 80);
 
-    function toggleMute() {
-      muted = !muted;
-      document.getElementById('muteBtn').textContent = muted ? '🔇' : '🔊';
-      if (muted) window.speechSynthesis.cancel();
-    }
+  reRollOverthinkMeter();
+  reRollVerdict();
+  newThirdOption();
+  reRollUniverses();
+  newBlame();
+  generateForecast();
+  fillCertificate(decisionText, score);
+  startTimeWasted();
 
-    // 4. Lamp Rubbing Mechanic
-    let rubProgress = 0;
-    let isRubbing = false;
-    let lastX = 0, lastY = 0;
-    const lampWrapper = document.getElementById('lampWrapper');
-    const lampImg = document.getElementById('lampImg');
+  showScreen('screen-result');
+}
 
-    function onPointerDown(e) {
-      isRubbing = true;
-      lastX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-      lastY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
-    }
+/* ============ OVERTHINKING METER (independent, equally scientific) ============ */
+const overthinkLevels = [
+  {max:20, label:"MINIMAL", color:"#3dff8a"},
+  {max:40, label:"MODERATE", color:"#28f5ff"},
+  {max:60, label:"ELEVATED", color:"#9b30ff"},
+  {max:80, label:"SEVERE", color:"#ff2fd4"},
+  {max:100, label:"CRITICAL / TRANSCENDENT", color:"#ffffff"}
+];
+function reRollOverthinkMeter(){
+  const val = Math.floor(Math.random()*101);
+  const bar = document.getElementById('overthinkBar');
+  bar.style.width = '0%';
+  setTimeout(() => { bar.style.width = val + '%'; }, 80);
+  const level = overthinkLevels.find(l => val <= l.max);
+  const labelEl = document.getElementById('overthinkLabel');
+  labelEl.textContent = "OVERTHINKING LEVEL: " + level.label;
+  labelEl.style.color = level.color;
+}
 
-    function onPointerMove(e) {
-      if (!isRubbing || rubProgress >= 100) return;
-      const x = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-      const y = e.clientY || (e.touches && e.touches[0].clientY) || 0;
-      const dist = Math.abs(x - lastX) + Math.abs(y - lastY);
-      if (dist > 10) {
-        lastX = x; lastY = y;
-        rubProgress = Math.min(100, rubProgress + 2.4);
-        document.getElementById('rubBar').style.width = rubProgress + '%';
-        playRubSound(rubProgress);
+/* ============ VERDICT (magic-8-ball style, no options needed) ============ */
+const verdicts = [
+  "DO IT. WHY NOT.",
+  "ABSOLUTELY NOT.",
+  "ASK AGAIN AFTER A NAP.",
+  "THE SIGNS POINT TO CHAOS.",
+  "YES, BUT YOU'LL REGRET IT.",
+  "NO, BUT YOU'LL REGRET THAT TOO.",
+  "FLIP A COIN. WE DON'T TRUST OURSELVES.",
+  "PROCEED WITH CAUTION AND SNACKS.",
+  "THIS HAS BEEN ESCALATED TO A HIGHER, EQUALLY CONFUSED AUTHORITY.",
+  "OUTLOOK UNCLEAR. TRY OVERTHINKING AGAIN."
+];
+function reRollVerdict(){
+  const v = verdicts[Math.floor(Math.random()*verdicts.length)];
+  document.getElementById('verdictChoice').textContent = v;
+}
 
-        emitSpoutSparkles(Math.floor(rubProgress / 20) + 2);
-        lampImg.style.transform = `rotate(${(Math.random() - 0.5) * 8}deg) scale(1.06)`;
+/* ============ THIRD OPTION GENERATOR ============ */
+const thirdOptions = [
+  "Go home and think about it for 3 business days.",
+  "Ask someone else and become even more confused.",
+  "Choose both.",
+  "Do absolutely nothing.",
+  "Flip a coin, then ignore the coin.",
+  "Open the fridge and reconsider your entire life.",
+  "Let the universe decide.",
+  "Sleep on it for 8 hours and forget the question entirely.",
+  "Google it, then trust a random forum post from 2011.",
+  "Make a pros and cons list, then lose the list.",
+  "Ask a nearby houseplant for guidance.",
+  "Delay the decision until it makes itself."
+];
+let lastThirdIndex = -1;
+function newThirdOption(){
+  let idx;
+  do{ idx = Math.floor(Math.random() * thirdOptions.length); } while(idx === lastThirdIndex && thirdOptions.length > 1);
+  lastThirdIndex = idx;
+  document.getElementById('thirdOptionText').textContent = thirdOptions[idx];
+}
 
-        if (rubProgress >= 100) startAwakening();
-      }
-    }
+/* ============ ALTERNATE UNIVERSE SIMULATOR ============ */
+const universeGoTemplates = [
+  "You go through with it. Somewhere, a tomato feels proud.",
+  "You go through with it. A stranger in another timeline high-fives you for no reason.",
+  "You go through with it. Scientists remain unimpressed but mildly curious.",
+  "You go through with it. This becomes the most interesting thing that happens today.",
+  "You go through with it. A cat watches silently and judges you anyway."
+];
+const universeNoTemplates = [
+  "You don't. A butterfly flaps its wings and also regrets a decision.",
+  "You don't. Somewhere, a Wi-Fi router disconnects in solidarity.",
+  "You don't. The universe shrugs and moves on.",
+  "You don't. Your future self sends a mildly concerned text back in time.",
+  "You don't. Somewhere, an alarm clock quietly dreads tomorrow."
+];
+function reRollUniverses(){
+  document.getElementById('universeA').textContent = universeGoTemplates[Math.floor(Math.random()*universeGoTemplates.length)];
+  document.getElementById('universeB').textContent = universeNoTemplates[Math.floor(Math.random()*universeNoTemplates.length)];
+}
 
-    function onPointerUp() { 
-      isRubbing = false; 
-      lampImg.style.transform = 'rotate(0deg) scale(1)';
-    }
+/* ============ BLAME ASSIGNMENT MODULE ============ */
+const blameTargets = [
+  "Mercury retrograde.",
+  "Your Wi-Fi router.",
+  "A pigeon outside your window.",
+  "The last text you didn't reply to.",
+  "Whoever invented Mondays.",
+  "Your horoscope, probably.",
+  "The three tabs you forgot to close.",
+  "That one cousin who always has an opinion.",
+  "The algorithm.",
+  "Past you. Always past you.",
+  "A poorly timed notification.",
+  "The full moon. It's always the full moon."
+];
+function newBlame(){
+  document.getElementById('blameText').textContent = "RESPONSIBLE PARTY: " + blameTargets[Math.floor(Math.random()*blameTargets.length)];
+}
 
-    lampWrapper.addEventListener('mousedown', onPointerDown);
-    window.addEventListener('mousemove', onPointerMove);
-    window.addEventListener('mouseup', onPointerUp);
-    lampWrapper.addEventListener('touchstart', onPointerDown);
-    window.addEventListener('touchmove', onPointerMove);
-    window.addEventListener('touchend', onPointerUp);
+/* ============ 5-DAY REGRET FORECAST ============ */
+const forecastDescs = ["Scattered doubt","Heavy overthinking","Clear regret skies","Chance of denial","Sudden panic showers","Light indecision","Mostly fine, somehow"];
+function generateForecast(){
+  const grid = document.getElementById('forecastGrid');
+  grid.innerHTML = '';
+  const days = ["TODAY","TOMORROW","DAY 3","DAY 4","DAY 5"];
+  days.forEach(d => {
+    const pct = Math.floor(Math.random()*101);
+    const desc = forecastDescs[Math.floor(Math.random()*forecastDescs.length)];
+    const div = document.createElement('div');
+    div.className = 'forecast-day';
+    div.innerHTML = '<div class="d">'+d+'</div><div class="p">'+pct+'%</div><div class="desc">'+desc+'</div>';
+    grid.appendChild(div);
+  });
+}
 
-    // 5. Grand 5-Second Awakening Sequence
-    function startAwakening() {
-      document.getElementById('rubInstructions').classList.add('hidden');
-      playEmergenceFanfare();
+/* ============ TIME WASTED COUNTER ============ */
+function startTimeWasted(){
+  decisionStartTime = Date.now();
+  if(timeWastedInterval) clearInterval(timeWastedInterval);
+  timeWastedInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - decisionStartTime) / 1000);
+    const mm = String(Math.floor(elapsed/60)).padStart(2,'0');
+    const ss = String(elapsed%60).padStart(2,'0');
+    document.getElementById('timeWasted').textContent = mm + ':' + ss;
+  }, 1000);
+}
 
-      let burstInterval = setInterval(() => emitSpoutSparkles(8, true), 120);
-      document.getElementById('subtitles').textContent = "💥 WHOOSH! Gold sparkles and sapphire smoke burst from the spout!";
+/* ============ CERTIFICATE ============ */
+function fillCertificate(decisionText, score){
+  document.getElementById('certDecision').textContent = '"' + decisionText + '"';
+  document.getElementById('certScore').textContent = 'Official Regret Score: ' + score + '/100';
+  document.getElementById('certVerdict').textContent = 'Classification: ' + classifyScore(score);
+  document.getElementById('certDate').textContent = 'Issued: ' + new Date().toLocaleString();
+  const certId = 'REG-' + Math.floor(100000 + Math.random()*899999);
+  document.getElementById('certId').textContent = 'Certificate No. ' + certId + ' — Not legally binding. Not scientifically valid. Not sorry.';
+}
 
-      setTimeout(() => {
-        const genieContainer = document.getElementById('genieContainer');
-        const genieSprite = document.getElementById('genieSprite');
-        genieContainer.classList.remove('hidden');
-        genieContainer.classList.add('flex');
-        genieSprite.classList.remove('genie-idle');
-        genieSprite.classList.add('erupting');
+/* ============ RESET ============ */
+function resetToTerminal(){
+  document.getElementById('decisionInput').value = '';
+  if(timeWastedInterval) clearInterval(timeWastedInterval);
+  showScreen('screen-terminal');
+}
+</script>
 
-        confetti({ particleCount: 90, spread: 80, origin: { y: 0.65 } });
-        document.getElementById('subtitles').textContent = "🌌 Look at him go! Emerging from the spout with cosmic stardust!";
-      }, 1800);
-
-      setTimeout(() => {
-        clearInterval(burstInterval);
-        const genieSprite = document.getElementById('genieSprite');
-        genieSprite.classList.remove('erupting');
-        genieSprite.classList.add('genie-idle');
-
-        lampWrapper.classList.add('scale-75', 'opacity-70', 'translate-y-28');
-        document.getElementById('wishPanel').classList.remove('hidden');
-        document.getElementById('inputForm').classList.remove('hidden');
-        document.getElementById('inputForm').classList.add('flex');
-        document.getElementById('moodBadge').classList.remove('hidden');
-
-        confetti({ particleCount: 140, spread: 100, origin: { y: 0.45 } });
-
-        const energeticIntro = "WAHOOOO! Ten thousand years will give ya SUCH a crick in the neck! Hang on, stretch the back, shake off the brass dust... BAM! How ya doin', kid?! Master of the lamp, ruler of the universe! You get THREE wishes! Count 'em! Uno, dos, tres! No returns, no exchanges, and no wishing for more wishes! So come on... what crazy dream are we cooking up first?!";
-        genieSpeak(energeticIntro, 1.05, 1.15);
-      }, 5000);
-    }
-
-    // 6. Speaking & Animation Sync
-    function genieSpeak(text, pitchMultiplier = 1.0, rateMultiplier = 1.05) {
-      document.getElementById('subtitles').textContent = `"${text}"`;
-      if (muted || !('speechSynthesis' in window)) return;
-
-      window.speechSynthesis.cancel();
-      const utt = new SpeechSynthesisUtterance(text);
-
-      const voices = window.speechSynthesis.getVoices();
-      const funVoice = voices.find(v => 
-        v.name.includes("Google US English") || 
-        v.name.includes("Daniel") || 
-        v.name.includes("Natural") || 
-        v.name.includes("Arthur") ||
-        (v.lang.startsWith("en") && !v.name.includes("Zira"))
-      ) || voices[0];
-
-      if (funVoice) utt.voice = funVoice;
-      utt.pitch = 1.08 * pitchMultiplier;
-      utt.rate = 1.12 * rateMultiplier;
-
-      const sprite = document.getElementById('genieSprite');
-
-      let talkSparkleInterval = null;
-      utt.onstart = () => {
-        sprite.classList.remove('genie-idle');
-        sprite.classList.add('genie-talking');
-        talkSparkleInterval = setInterval(() => emitSpoutSparkles(2), 250);
-      };
-
-      utt.onend = () => {
-        sprite.classList.remove('genie-talking');
-        sprite.classList.add('genie-idle');
-        if (talkSparkleInterval) clearInterval(talkSparkleInterval);
-      };
-
-      window.speechSynthesis.speak(utt);
-    }
-
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-    }
-
-    // 7. Fun-Loving Dialogue Engine & Wish Judge
-    let wishes = [];
-    const funMoods = ["PARTY TIME 🎉", "HYPED UP ⚡", "LOVING IT 😎", "GENIE APPROVED ✨"];
-
-    function handleSend(e) {
-      e.preventDefault();
-      const input = document.getElementById('userInput');
-      const text = input.value.trim();
-      if (!text) return;
-      input.value = '';
-
-      const lower = text.toLowerCase();
-
-      if (lower.includes("more wishes") || lower.includes("infinite wishes")) {
-        document.getElementById('moodText').textContent = "NICE TRY, PAL 😂";
-        genieSpeak("AHAHAHA! Oh, look at you, trying the oldest hustle in the magic carpet book! Nice try, kid, but the magical union contract says strictly THREE! Try again!");
-        return;
-      }
-
-      if (lower.includes("free you") || lower.includes("set you free")) {
-        document.getElementById('moodText').textContent = "TEARING UP 🥹";
-        genieSpeak("Wait... set me free?! For real?! Aw, man, you're gonna make a giant blue guy cry right into his turban! That is legendary! You got a heart of gold, kid!");
-        return;
-      }
-
-      if (wishes.length < 3) {
-        const wishNumber = wishes.length + 1;
-        const stats = {
-          creativity: Math.floor(Math.random() * 35) + 65,
-          greed: (lower.includes('money') || lower.includes('rich') || lower.includes('billion')) ? 98 : Math.floor(Math.random() * 45) + 30,
-          chaos: Math.floor(Math.random() * 50) + 50
-        };
-        wishes.push({ text, stats });
-
-        const currentSlot = document.getElementById(`slot${wishNumber}`);
-        currentSlot.className = "p-3 rounded-2xl border border-emerald-400/60 bg-emerald-950/60 text-emerald-200 font-semibold";
-        currentSlot.innerHTML = `<span class="text-amber-300 font-bold">✨ Wish #${wishNumber} GRANTED:</span> "${text}"`;
-
-        if (wishNumber < 3) {
-          const nextSlot = document.getElementById(`slot${wishNumber + 1}`);
-          nextSlot.className = "p-3 rounded-2xl border border-amber-400/50 bg-amber-400/15 text-amber-200";
-          nextSlot.innerHTML = `✨ Wish #${wishNumber + 1} — WHAT'S NEXT, BOSS?`;
-        }
-        document.getElementById('wishCounter').textContent = `${wishes.length}/3`;
-        document.getElementById('moodText').textContent = funMoods[Math.floor(Math.random() * funMoods.length)];
-
-        document.getElementById('altBox').classList.remove('hidden');
-        if (lower.includes('money') || lower.includes('rich')) {
-          document.getElementById('altList').innerHTML = `
-            <li>A diamond-encrusted camel with turbo nitrous boosters!</li>
-            <li>Making it rain pure 24-karat gold falafel coins!</li>
-          `;
-        } else {
-          document.getElementById('altList').innerHTML = `
-            <li>A supersonic flying Persian rug with heated seats!</li>
-            <li>A personal 50-piece brass band following you everywhere!</li>
-          `;
-        }
-
-        let funReaction = "";
-        if (stats.greed > 85) {
-          funReaction = `AHAHAHA! Cash, baby, CASH! Ding ding ding! Wish #${wishNumber} is LOCKED IN! "${text}". Going big or going home, huh? I respect the hustle!`;
-        } else if (stats.creativity > 80) {
-          funReaction = `OH, NOW WE'RE TALKING! Wish #${wishNumber} granted: "${text}"! That is what I call grade-A pure Genie entertainment! Boom baby!`;
-        } else {
-          funReaction = `ALAKAZAM! Wish #${wishNumber} is in the books! "${text}"! You ask, the big blue guy delivers!`;
-        }
-
-        confetti({ particleCount: 75, spread: 70, origin: { y: 0.55 } });
-        emitSpoutSparkles(25, true);
-        genieSpeak(funReaction, 1.1, 1.15);
-
-        if (wishes.length === 3) {
-          setTimeout(showFinalJudgment, 4800);
-        }
-      }
-    }
-
-    // 8. Grand Finale Climax
-    function showFinalJudgment() {
-      confetti({ particleCount: 180, spread: 100, origin: { y: 0.5 } });
-      document.getElementById('judgmentModal').classList.remove('hidden');
-
-      const avgGreed = Math.round(wishes.reduce((a, b) => a + b.stats.greed, 0) / 3);
-      const avgChaos = Math.round(wishes.reduce((a, b) => a + b.stats.chaos, 0) / 3);
-      const avgCreativity = Math.round(wishes.reduce((a, b) => a + b.stats.creativity, 0) / 3);
-
-      const verdict = avgGreed > 75 ? "👑 CERTIFIED HIGH ROLLER!" : avgChaos > 70 ? "🎉 PURE PARTY ANIMAL!" : "🔥 ABSOLUTE COSMIC LEGEND!";
-      document.getElementById('verdictTag').textContent = verdict;
-      
-      const finaleSpeech = `"WELL, PACK MY BAGS AND SEND ME TO AGRABAH! That was the most fun I've had in ten thousand years! You are officially: ${verdict}! Enjoy the magic, kid, you've earned it!"`;
-      document.getElementById('verdictSpeech').textContent = finaleSpeech;
-
-      document.getElementById('statsBox').innerHTML = `
-        <div class="flex justify-between"><span>Creativity:</span> <span class="text-cyan-300 font-bold">${avgCreativity}%</span></div>
-        <div class="flex justify-between"><span>Greed Index:</span> <span class="text-red-300 font-bold">${avgGreed}%</span></div>
-        <div class="flex justify-between"><span>Chaos & Fun Factor:</span> <span class="text-amber-300 font-bold">${avgChaos}%</span></div>
-        <div class="flex justify-between"><span>Genie Friendship Rating:</span> <span class="text-emerald-300 font-bold">100/100! 🌟</span></div>
-      `;
-
-      genieSpeak(finaleSpeech, 1.12, 1.1);
-    }
-
-    // Voice recognition
-    function toggleMic() {
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SR) { alert("Microphone not supported on this browser. Type your wish!"); return; }
-      const rec = new SR();
-      rec.lang = 'en-US';
-      rec.onstart = () => document.getElementById('micBtn').classList.add('bg-red-600', 'animate-pulse');
-      rec.onresult = (e) => {
-        document.getElementById('userInput').value = e.results[0][0].transcript;
-        document.getElementById('micBtn').classList.remove('bg-red-600', 'animate-pulse');
-      };
-      rec.onerror = () => document.getElementById('micBtn').classList.remove('bg-red-600', 'animate-pulse');
-      rec.onend = () => document.getElementById('micBtn').classList.remove('bg-red-600', 'animate-pulse');
-      rec.start();
-    }
-  </script>
 </body>
 </html>
