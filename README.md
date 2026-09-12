@@ -42,7 +42,7 @@ No build step or server required — just open the file directly.
 For Software:
 
 # Screenshots
-https://drive.google.com/file/d/1BY1aEBJRbRbh3GJB55h7wIs4I1ZiemVF/view?usp=drive_link
+https://drive.google.com/drive/folders/1IAm4yfv5yP9sgtR-f-mxy0bRbrhrALGU?usp=drive_link
 
 # Diagram
 https://drive.google.com/drive/folders/1hni1LAR88X1x8CA10Vgj8wIKG2-0JcEE?usp=drive_link
