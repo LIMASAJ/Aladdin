@@ -13,7 +13,7 @@
 
   <style>
     body {
-      background: radial-gradient(circle at 50% 35%, #250a46 0%, #0d041c 65%, #030107 100%);
+      background: radial-gradient(circle at 50% 35%, #2a0b4d 0%, #0d041c 65%, #030107 100%);
       font-family: 'Quicksand', sans-serif;
       overflow: hidden;
     }
@@ -150,147 +150,181 @@
         </div>
       </div>
 
-      <!-- 1. BEAUTIFULLY DETAILED GOLDEN ARABIAN LAMP (Embedded Pure Vector) -->
-      <div id="lampWrapper" class="cursor-grab active:cursor-grabbing relative transition-all duration-700 flex items-center justify-center min-w-[300px] min-h-[200px]">
-        <svg id="lampSvg" width="380" height="230" viewBox="0 0 500 300" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-72 md:w-96 drop-shadow-[0_0_35px_rgba(245,176,65,0.75)] transition-transform duration-150 select-none">
+      <!-- VIBRANT 24K GOLD ARABIAN LAMP (Full Color Multi-Layer Vector) -->
+      <div id="lampWrapper" class="cursor-grab active:cursor-grabbing relative transition-all duration-700 flex items-center justify-center min-w-[320px] min-h-[220px]">
+        <svg id="lampSvg" width="400" height="240" viewBox="0 0 500 300" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-80 md:w-[420px] drop-shadow-[0_0_35px_rgba(245,176,65,0.85)] transition-transform duration-150 select-none">
           <defs>
-            <linearGradient id="goldPlate" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#fff2a8" />
-              <stop offset="25%" stopColor="#eab308" />
-              <stop offset="50%" stopColor="#fef08a" />
-              <stop offset="75%" stopColor="#ca8a04" />
-              <stop offset="100%" stopColor="#713f12" />
+            <!-- 24-Karat Gold Gradient -->
+            <linearGradient id="richGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#fff8b8" />
+              <stop offset="20%" stopColor="#ffd700" />
+              <stop offset="45%" stopColor="#ffb703" />
+              <stop offset="70%" stopColor="#d48b00" />
+              <stop offset="90%" stopColor="#8a5300" />
+              <stop offset="100%" stopColor="#573300" />
             </linearGradient>
-            <linearGradient id="goldTrim" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#fef9c3" />
-              <stop offset="100%" stopColor="#a16207" />
+            <!-- High Polish Specular Highlight -->
+            <linearGradient id="goldSheen" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" stop-opacity="0.9" />
+              <stop offset="50%" stopColor="#ffe600" stop-opacity="0.4" />
+              <stop offset="100%" stopColor="#b37400" stop-opacity="0" />
             </linearGradient>
-            <radialGradient id="rubyGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#f87171" />
-              <stop offset="70%" stopColor="#dc2626" />
-              <stop offset="100%" stopColor="#450a0a" />
+            <!-- Royal Ruby Jewel -->
+            <radialGradient id="vibrantRuby" cx="35%" cy="35%" r="65%">
+              <stop offset="0%" stopColor="#ff6b81" />
+              <stop offset="40%" stopColor="#e11d48" />
+              <stop offset="85%" stopColor="#881337" />
+              <stop offset="100%" stopColor="#4c0519" />
             </radialGradient>
+            <!-- Shadow Depth Under Belly -->
+            <linearGradient id="shadowGold" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#7a4b00" />
+              <stop offset="100%" stopColor="#3d2200" />
+            </linearGradient>
           </defs>
 
           <!-- Pedestal Stand Base -->
-          <ellipse cx="250" cy="275" rx="85" ry="18" fill="url(#goldPlate)" stroke="#fef08a" stroke-width="2" />
-          <path d="M210,270 C210,240 225,225 250,225 C275,225 290,240 290,270 Z" fill="url(#goldPlate)" stroke="#713f12" stroke-width="2" />
+          <ellipse cx="250" cy="272" rx="92" ry="20" fill="url(#shadowGold)" />
+          <ellipse cx="250" cy="268" rx="88" ry="17" fill="url(#richGold)" stroke="#ffe600" stroke-width="2.5" />
+          <path d="M210,265 C210,235 228,218 250,218 C272,218 290,235 290,265 Z" fill="url(#richGold)" stroke="#7a4b00" stroke-width="2" />
+          <!-- Pedestal Ring Rings -->
+          <ellipse cx="250" cy="235" rx="35" ry="8" fill="url(#goldSheen)" />
 
           <!-- Main Lamp Body Belly -->
-          <path d="M150,200 C95,180 90,125 185,115 C285,105 340,130 355,180 C360,215 315,235 250,235 C185,235 165,220 150,200 Z" fill="url(#goldPlate)" stroke="#fff" stroke-width="2" />
-          
+          <path d="M140,195 C85,175 80,120 180,110 C290,100 350,125 365,175 C370,215 320,235 250,235 C180,235 155,215 140,195 Z" fill="url(#richGold)" stroke="#fff" stroke-width="2" />
+          <!-- Belly Specular Gleam -->
+          <path d="M185,125 C240,118 310,132 335,160 C310,150 250,140 185,148 Z" fill="url(#goldSheen)" />
+
           <!-- Ornate Persian Filigree & Ruby Gem Inset -->
-          <path d="M180,165 Q250,135 320,165" stroke="#713f12" stroke-width="3.5" fill="none" stroke-dasharray="5 3" />
-          <path d="M190,180 Q250,155 310,180" stroke="#fef08a" stroke-width="2.5" fill="none" />
-          <circle cx="250" cy="170" r="10" fill="url(#rubyGlow)" stroke="#fef08a" stroke-width="2.5" />
+          <path d="M175,165 Q250,135 325,165" stroke="#613800" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="6 4" />
+          <path d="M185,182 Q250,155 315,182" stroke="#fff8b8" stroke-width="3" fill="none" />
+          <!-- Sparkling Ruby Centerpiece -->
+          <circle cx="250" cy="168" r="12" fill="url(#vibrantRuby)" stroke="#ffe600" stroke-width="3" />
+          <circle cx="246" cy="164" r="3" fill="#ffffff" />
 
-          <!-- Curving Spout Outflow to Right -->
-          <path d="M345,145 C385,135 435,85 450,42 C455,32 445,32 435,39 C405,62 350,112 320,132 Z" fill="url(#goldPlate)" stroke="#fef08a" stroke-width="2" />
-          <ellipse cx="448" cy="38" rx="8" ry="4.5" fill="#381b04" stroke="#fef08a" stroke-width="1.5" />
+          <!-- Golden Connecting Chain from Lid to Handle -->
+          <path d="M250,75 Q190,45 130,75" stroke="#ffe600" stroke-width="3" fill="none" stroke-dasharray="4 3" />
 
-          <!-- Ornate Lamp Handle to Left -->
-          <path d="M140,165 C75,145 50,65 115,50 C155,40 170,95 150,125 C135,145 120,130 135,100 C145,80 125,65 105,75 C75,90 95,135 130,155 Z" fill="url(#goldPlate)" stroke="#713f12" stroke-width="2" />
+          <!-- Curving Long Spout Outflow to Right -->
+          <path d="M350,142 C390,132 445,82 465,38 C470,28 460,28 450,35 C415,60 355,110 322,130 Z" fill="url(#richGold)" stroke="#ffe600" stroke-width="2" />
+          <ellipse cx="463" cy="35" rx="9" ry="5" fill="#291600" stroke="#ffd700" stroke-width="2" />
 
-          <!-- Lamp Cap Lid & Crescent Finial -->
-          <path d="M215,115 C215,100 235,90 250,90 C265,90 285,100 285,115 Z" fill="url(#goldPlate)" stroke="#fff" stroke-width="1.5" />
-          <rect x="246" y="70" width="8" height="20" fill="url(#goldTrim)" />
-          <path d="M250,70 C256,70 262,65 262,58 C262,52 256,46 250,46 C246,46 242,48 244,52 C240,52 238,58 242,64 C244,68 246,70 250,70 Z" fill="#fef08a" />
+          <!-- Ornate S-Curved Lamp Handle to Left -->
+          <path d="M135,165 C65,140 40,55 110,40 C155,30 170,90 148,122 C132,142 118,128 132,98 C142,78 122,62 102,72 C70,88 90,135 125,155 Z" fill="url(#richGold)" stroke="#7a4b00" stroke-width="2" />
+
+          <!-- Lamp Lid & Crescent Finial -->
+          <path d="M212,112 C212,96 232,86 250,86 C268,86 288,96 288,112 Z" fill="url(#richGold)" stroke="#fff" stroke-width="1.5" />
+          <rect x="246" y="65" width="8" height="22" fill="url(#richGold)" />
+          <circle cx="250" cy="55" r="9" fill="url(#richGold)" stroke="#fff8b8" stroke-width="2" />
+          <circle cx="250" cy="55" r="4.5" fill="url(#vibrantRuby)" />
         </svg>
 
-        <!-- Spout anchor point positioned right on the lamp's tip -->
+        <!-- Spout anchor point for smoke & sparkles -->
         <div id="spoutPoint" class="absolute top-5 right-2 w-8 h-8 pointer-events-none"></div>
       </div>
 
-      <!-- 2. BEAUTIFUL EXPRESSIVE GENIE (Embedded Pure Vector) -->
+      <!-- FULL COLOR VIBRANT BLUE GENIE (Disney-Inspired Theatrical Vector) -->
       <div id="genieContainer" class="hidden flex-col items-center absolute -top-16 z-20 pointer-events-none">
         <div id="genieSprite" class="relative genie-idle transition-transform duration-300">
-          <!-- Mystical Blue/Gold Backlight Glow -->
-          <div class="absolute inset-0 rounded-full bg-gradient-to-t from-cyan-500/50 via-blue-500/30 to-amber-300/40 blur-3xl -z-10 animate-pulse"></div>
+          <!-- Luminous Electric Cyan Backlight -->
+          <div class="absolute inset-0 rounded-full bg-gradient-to-t from-cyan-400/60 via-blue-600/35 to-amber-300/40 blur-3xl -z-10 animate-pulse"></div>
           
-          <svg id="genieSvg" width="380" height="460" viewBox="0 0 400 480" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-72 md:w-96 max-h-[460px] cyan-glow select-none pointer-events-none">
+          <svg id="genieSvg" width="380" height="460" viewBox="0 0 400 480" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-80 md:w-[400px] max-h-[460px] cyan-glow select-none pointer-events-none">
             <defs>
-              <!-- Luminous Sapphire Blue Skin Tone -->
-              <linearGradient id="genieBlueSkin" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#7dd3fc" />
-                <stop offset="35%" stopColor="#38bdf8" />
-                <stop offset="75%" stopColor="#0284c7" />
-                <stop offset="100%" stopColor="#0369a1" />
+              <!-- Electric Disney Genie Cyan-Blue Skin Tone -->
+              <linearGradient id="electricBlueSkin" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#9be7ff" />
+                <stop offset="30%" stopColor="#38bdf8" />
+                <stop offset="70%" stopColor="#0284c7" />
+                <stop offset="100%" stopColor="#035388" />
               </linearGradient>
-              <linearGradient id="smokeTailGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+              <!-- Whimsical Smoke Tail -->
+              <linearGradient id="magicSmokeGrad" x1="50%" y1="0%" x2="50%" y2="100%">
                 <stop offset="0%" stopColor="#0284c7" />
-                <stop offset="50%" stopColor="#38bdf8" stop-opacity="0.8" />
-                <stop offset="85%" stopColor="#f5b041" stop-opacity="0.4" />
-                <stop offset="100%" stopColor="#ffd778" stop-opacity="0" />
+                <stop offset="45%" stopColor="#38bdf8" stop-opacity="0.9" />
+                <stop offset="80%" stopColor="#f5b041" stop-opacity="0.5" />
+                <stop offset="100%" stopColor="#ffd700" stop-opacity="0" />
               </linearGradient>
-              <linearGradient id="wristGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#fef08a" />
-                <stop offset="50%" stopColor="#eab308" />
-                <stop offset="100%" stopColor="#a16207" />
+              <!-- Shiny Gold Wrist Cuffs -->
+              <linearGradient id="cuffGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#fff9c4" />
+                <stop offset="40%" stopColor="#facc15" />
+                <stop offset="85%" stopColor="#ca8a04" />
+                <stop offset="100%" stopColor="#713f12" />
               </linearGradient>
-              <linearGradient id="royalRubyBelt" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#f43f5e" />
-                <stop offset="70%" stopColor="#9f1239" />
-                <stop offset="100%" stopColor="#4c0519" />
+              <!-- Royal Crimson Velvet Sash -->
+              <linearGradient id="crimsonSash" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#fb7185" />
+                <stop offset="50%" stopColor="#e11d48" />
+                <stop offset="100%" stopColor="#881337" />
               </linearGradient>
             </defs>
 
             <!-- Curving Smoke Tail from Lamp -->
-            <path d="M175,340 C140,370 130,410 185,440 C240,470 200,480 200,480 C200,480 270,440 220,400 C170,360 215,350 225,340 Z" fill="url(#smokeTailGrad)" />
+            <path d="M175,340 C130,370 120,415 185,445 C250,475 200,480 200,480 C200,480 280,440 225,395 C165,350 215,350 225,340 Z" fill="url(#magicSmokeGrad)" />
 
-            <!-- Left Welcoming Hand & Gold Bracer -->
-            <path d="M130,195 C85,215 70,250 85,285 C95,305 110,295 105,275 C95,250 115,225 145,210 Z" fill="url(#genieBlueSkin)" stroke="#0284c7" stroke-width="2" />
-            <rect x="76" y="260" width="24" height="26" rx="5" fill="url(#wristGold)" stroke="#fff" stroke-width="1.5" />
-            <!-- Open palm fingers -->
-            <path d="M72,285 C62,285 52,275 58,265 C64,255 78,265 82,280 Z" fill="url(#genieBlueSkin)" stroke="#0284c7" />
+            <!-- Left Welcoming Hand & Arm -->
+            <path d="M130,195 C85,215 70,250 85,285 C95,305 110,295 105,275 C95,250 115,225 145,210 Z" fill="url(#electricBlueSkin)" stroke="#0369a1" stroke-width="2" />
+            <!-- Golden Wristband -->
+            <rect x="74" y="258" width="26" height="28" rx="6" fill="url(#cuffGold)" stroke="#ffffff" stroke-width="1.5" />
+            <!-- Open Hand Palm -->
+            <path d="M68,284 C56,284 48,272 56,260 C64,248 80,260 84,276 Z" fill="url(#electricBlueSkin)" stroke="#0284c7" />
 
-            <!-- Right Pointing Hand & Gold Bracer -->
-            <path d="M270,195 C315,215 330,250 315,285 C305,305 290,295 295,275 C305,250 285,225 255,210 Z" fill="url(#genieBlueSkin)" stroke="#0284c7" stroke-width="2" />
-            <rect x="298" y="260" width="24" height="26" rx="5" fill="url(#wristGold)" stroke="#fff" stroke-width="1.5" />
+            <!-- Right Theatrical Pointing Arm -->
+            <path d="M270,195 C315,215 330,250 315,285 C305,305 290,295 295,275 C305,250 285,225 255,210 Z" fill="url(#electricBlueSkin)" stroke="#0369a1" stroke-width="2" />
+            <!-- Golden Wristband -->
+            <rect x="296" y="258" width="26" height="28" rx="6" fill="url(#cuffGold)" stroke="#ffffff" stroke-width="1.5" />
             <!-- Theatrical Pointing Finger -->
-            <path d="M315,280 C335,275 350,265 355,275 C355,285 335,290 315,288 Z" fill="url(#genieBlueSkin)" stroke="#0284c7" />
+            <path d="M315,280 C340,272 360,262 364,274 C364,286 340,292 315,288 Z" fill="url(#electricBlueSkin)" stroke="#0284c7" />
 
             <!-- Broad Muscular Genie Torso -->
-            <path d="M130,185 C125,260 160,335 200,340 C240,335 275,260 270,185 C265,160 135,160 130,185 Z" fill="url(#genieBlueSkin)" stroke="#0369a1" stroke-width="2" />
+            <path d="M130,185 C125,260 160,335 200,340 C240,335 275,260 270,185 C265,155 135,155 130,185 Z" fill="url(#electricBlueSkin)" stroke="#035388" stroke-width="2" />
+            <!-- Muscular Chest Definition Lines -->
+            <path d="M170,225 Q200,240 230,225" stroke="#0284c7" stroke-width="3" fill="none" />
+            <path d="M200,230 L200,285" stroke="#0284c7" stroke-width="3" fill="none" />
 
-            <!-- Red Waist Sash -->
-            <path d="M165,325 Q200,345 235,325 L238,342 Q200,360 162,342 Z" fill="url(#royalRubyBelt)" stroke="url(#wristGold)" stroke-width="1.5" />
+            <!-- Crimson Red Waist Sash -->
+            <path d="M165,325 Q200,345 235,325 L238,345 Q200,365 162,345 Z" fill="url(#crimsonSash)" stroke="url(#cuffGold)" stroke-width="2" />
 
-            <!-- Open Royal Arabian Vest -->
-            <path d="M132,185 Q165,260 170,320 L135,310 Q125,240 132,185 Z" fill="#4c0519" stroke="url(#wristGold)" stroke-width="2" />
-            <path d="M268,185 Q235,260 230,320 L265,310 Q275,240 268,185 Z" fill="#4c0519" stroke="url(#wristGold)" stroke-width="2" />
-
-            <!-- Genie Head & Ears -->
-            <path d="M150,115 C150,60 250,60 250,115 C250,155 235,170 200,170 C165,170 150,155 150,115 Z" fill="url(#genieBlueSkin)" stroke="#0284c7" stroke-width="2" />
-            <path d="M150,110 C130,105 110,85 125,75 C140,85 148,95 150,110 Z" fill="url(#genieBlueSkin)" stroke="#0284c7" stroke-width="1.5" />
-            <circle cx="128" cy="85" r="4" fill="url(#wristGold)" />
-            <path d="M250,110 C270,105 290,85 275,75 C260,85 252,95 250,110 Z" fill="url(#genieBlueSkin)" stroke="#0284c7" stroke-width="1.5" />
+            <!-- Genie Head & Pointed Ears -->
+            <path d="M148,115 C148,55 252,55 252,115 C252,155 235,170 200,170 C165,170 148,155 148,115 Z" fill="url(#electricBlueSkin)" stroke="#0369a1" stroke-width="2" />
+            <!-- Pointed Left Ear with Gold Earring -->
+            <path d="M150,110 C128,105 106,85 122,74 C138,84 146,94 150,110 Z" fill="url(#electricBlueSkin)" stroke="#0284c7" stroke-width="1.5" />
+            <circle cx="125" cy="85" r="5.5" fill="url(#cuffGold)" stroke="#ffffff" stroke-width="1" />
+            <!-- Pointed Right Ear -->
+            <path d="M250,110 C272,105 294,85 278,74 C262,84 254,94 250,110 Z" fill="url(#electricBlueSkin)" stroke="#0284c7" stroke-width="1.5" />
 
             <!-- Black Topknot Ponytail Hair -->
-            <path d="M196,65 C196,40 190,25 180,15 C205,18 205,45 204,65 Z" fill="#082f49" />
-            <rect x="194" y="58" width="12" height="6" rx="2" fill="url(#wristGold)" />
+            <path d="M196,65 C196,38 188,22 176,12 C204,15 206,42 204,65 Z" fill="#0f172a" />
+            <rect x="193" y="58" width="14" height="7" rx="2" fill="url(#cuffGold)" stroke="#ffffff" stroke-width="1" />
 
             <!-- Fun Expressive Eyebrows -->
-            <path d="M165,92 Q180,82 192,90" stroke="#082f49" stroke-width="4.5" stroke-linecap="round" fill="none" />
-            <path d="M235,92 Q220,82 208,90" stroke="#082f49" stroke-width="4.5" stroke-linecap="round" fill="none" />
+            <path d="M162,90 Q180,78 194,88" stroke="#0f172a" stroke-width="5" stroke-linecap="round" fill="none" />
+            <path d="M238,90 Q220,78 206,88" stroke="#0f172a" stroke-width="5" stroke-linecap="round" fill="none" />
 
-            <!-- Big Expressive Eyes -->
-            <ellipse cx="178" cy="106" rx="10" ry="9" fill="#fff" />
-            <ellipse cx="222" cy="106" rx="10" ry="9" fill="#fff" />
-            <circle cx="178" cy="106" r="4.5" fill="#f59e0b" />
-            <circle cx="222" cy="106" r="4.5" fill="#f59e0b" />
-            <circle cx="178" cy="106" r="2.5" fill="#000" />
-            <circle cx="222" cy="106" r="2.5" fill="#000" />
+            <!-- Big Expressive Animated Eyes -->
+            <ellipse cx="178" cy="105" rx="11" ry="10" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
+            <ellipse cx="222" cy="105" rx="11" ry="10" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
+            <!-- Irises (Golden Amber) -->
+            <circle cx="178" cy="105" r="5" fill="#f59e0b" />
+            <circle cx="222" cy="105" r="5" fill="#f59e0b" />
+            <!-- Pupils -->
+            <circle cx="178" cy="105" r="2.8" fill="#000000" />
+            <circle cx="222" cy="105" r="2.8" fill="#000000" />
+            <!-- Eye Highlights -->
+            <circle cx="176" cy="103" r="1.5" fill="#ffffff" />
+            <circle cx="220" cy="103" r="1.5" fill="#ffffff" />
 
             <!-- Chiseled Djinn Nose -->
-            <path d="M200,105 L205,124 L195,126" stroke="#0369a1" stroke-width="2.5" stroke-linecap="round" fill="none" />
+            <path d="M200,104 L206,124 L194,126" stroke="#0369a1" stroke-width="2.5" stroke-linecap="round" fill="none" />
 
-            <!-- Big Friendly Smiling Mouth (Animates when talking) -->
-            <path id="mouthPath" d="M178,138 Q200,165 222,138 Q200,146 178,138 Z" fill="#450a0a" stroke="#082f49" stroke-width="2" />
+            <!-- Big Friendly Smiling Mouth (Animates with speech) -->
+            <path id="mouthPath" d="M176,136 Q200,166 224,136 Q200,144 176,136 Z" fill="#881337" stroke="#0f172a" stroke-width="2" />
             <!-- Bright White Teeth -->
-            <path d="M182,139 Q200,146 218,139" stroke="#ffffff" stroke-width="3" fill="none" />
+            <path d="M180,137 Q200,145 220,137" stroke="#ffffff" stroke-width="3.5" fill="none" stroke-linecap="round" />
 
             <!-- Curled Black Goatee Beard -->
-            <path d="M195,152 C195,175 190,185 205,188 C215,188 210,175 205,152 Z" fill="#082f49" />
+            <path d="M195,152 C195,178 188,188 206,190 C218,190 212,178 205,152 Z" fill="#0f172a" />
           </svg>
         </div>
       </div>
@@ -594,10 +628,9 @@
         talkSparkleInterval = setInterval(() => emitSpoutSparkles(2), 250);
 
         mouthInterval = setInterval(() => {
-          // Animate mouth opening and closing naturally while speaking
           mouth.setAttribute('d', Math.random() > 0.5 
-            ? "M175,136 Q200,168 225,136 Q200,144 175,136 Z" 
-            : "M178,138 Q200,152 222,138 Q200,144 178,138 Z"
+            ? "M174,134 Q200,168 226,134 Q200,142 174,134 Z" 
+            : "M176,136 Q200,152 224,136 Q200,142 176,136 Z"
           );
         }, 120);
       };
@@ -607,7 +640,7 @@
         sprite.classList.add('genie-idle');
         if (mouthInterval) clearInterval(mouthInterval);
         if (talkSparkleInterval) clearInterval(talkSparkleInterval);
-        mouth.setAttribute('d', "M178,138 Q200,165 222,138 Q200,146 178,138 Z");
+        mouth.setAttribute('d', "M176,136 Q200,166 224,136 Q200,144 176,136 Z");
       };
 
       window.speechSynthesis.speak(utt);
