@@ -13,11 +13,12 @@
 
   <style>
     body {
-      background: radial-gradient(circle at center, #1e0938 0%, #0c0418 60%, #030107 100%);
+      background: radial-gradient(circle at center, #20083c 0%, #0c0318 60%, #030107 100%);
       font-family: 'Quicksand', sans-serif;
       overflow: hidden;
     }
     .font-royal { font-family: 'Cinzel Decorative', 'Cinzel', serif; }
+    
     .gold-glow {
       text-shadow: 0 0 16px rgba(245, 176, 65, 0.8), 0 0 32px rgba(245, 176, 65, 0.4);
     }
@@ -25,7 +26,7 @@
       filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.75)) drop-shadow(0 0 50px rgba(56, 189, 248, 0.4));
     }
     
-    /* Royal Arabian Border Frame */
+    /* Royal Palace Outer Frame */
     .palace-arch {
       box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.95), inset 0 0 20px rgba(245, 176, 65, 0.35);
       border: 3px double rgba(245, 176, 65, 0.45);
@@ -42,7 +43,7 @@
       animation: genieShowmanFloat 4.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
     }
 
-    /* Dynamic Speech Gestures & Body Movement */
+    /* Active Speech Gestures & Body Movement */
     @keyframes talkingBounce {
       0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); }
       20% { transform: translateY(-12px) scale(1.06) rotate(3deg); }
@@ -54,7 +55,7 @@
       animation: talkingBounce 0.65s ease-in-out infinite !important;
     }
 
-    /* 5-Second Dramatic Emergence from Lamp Spout */
+    /* Pop out from Lamp Spout Animation */
     @keyframes eruptFromSpout {
       0% { 
         transform: translate(60px, 160px) scale(0.02) rotate(-60deg); 
@@ -87,7 +88,7 @@
 </head>
 
 <body class="w-screen h-screen flex flex-col justify-between p-4 md:p-6 text-slate-100 select-none palace-arch relative">
-  <!-- Arabian Sky & Sparkle Physics Canvas -->
+  <!-- Arabian Night Sky & Particle Sparkle Canvases -->
   <canvas id="skyCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
   <canvas id="sparkleCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-30"></canvas>
 
@@ -150,18 +151,19 @@
       </div>
 
       <!-- LAMP WRAPPER -->
-      <div id="lampWrapper" class="cursor-grab active:cursor-grabbing relative transition-all duration-700">
+      <div id="lampWrapper" class="cursor-grab active:cursor-grabbing relative transition-all duration-700 flex items-center justify-center min-w-[280px] min-h-[190px]">
         <img 
           id="lampImg"
           src="lamp.png" 
           alt="Magical Arabian Lamp"
-          class="w-64 md:w-80 object-contain drop-shadow-[0_0_30px_rgba(245,176,65,0.65)] transition-transform duration-150"
+          onerror="this.onerror=null; this.src='https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8xNV8zZF9pbGx1c3RyYXRpb25fb2ZfYV9nb2xkZW5fbWFnaWNfbGFtcF9pc29sYXRlX2U0MGJmNjE0LTVmNTMtNGQwNS1iYjA5LTg4NDRhYzYxYTUyMS5wbmc.png';"
+          class="w-64 md:w-80 h-auto object-contain drop-shadow-[0_0_30px_rgba(245,176,65,0.75)] transition-transform duration-150 pointer-events-none select-none"
         />
         <!-- Spout anchor point for smoke & sparkles -->
-        <div id="spoutPoint" class="absolute top-2 right-4 w-6 h-6 pointer-events-none"></div>
+        <div id="spoutPoint" class="absolute top-4 right-6 w-8 h-8 pointer-events-none"></div>
       </div>
 
-      <!-- GENIE CHARACTER SPRITE (Pops Out directly above the lamp) -->
+      <!-- GENIE CHARACTER SPRITE (Pops out directly above the lamp) -->
       <div id="genieContainer" class="hidden flex-col items-center absolute -top-12 z-20 pointer-events-none">
         <div id="genieSprite" class="relative genie-idle transition-transform duration-300">
           <!-- Backlight Halo -->
@@ -170,7 +172,8 @@
             id="genieImg"
             src="genie.png" 
             alt="Fun-Loving Genie" 
-            class="w-72 md:w-96 max-h-[440px] object-contain cyan-glow select-none"
+            onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/3504/3504245.png';"
+            class="w-72 md:w-96 max-h-[440px] object-contain cyan-glow select-none pointer-events-none"
           />
         </div>
       </div>
@@ -261,8 +264,8 @@
         sparkles.push({
           x: originX + (Math.random() - 0.5) * 16,
           y: originY + (Math.random() - 0.5) * 16,
-          vx: isBurst ? (Math.random() - 0.5) * 18 : (Math.random() - 0.3) * 6,
-          vy: isBurst ? -Math.random() * 16 - 4 : -Math.random() * 7 - 3,
+          vx: isBurst ? (Math.random() - 0.5) * 20 : (Math.random() - 0.3) * 7,
+          vy: isBurst ? -Math.random() * 18 - 4 : -Math.random() * 8 - 3,
           size: Math.random() * 4.5 + 2,
           color: Math.random() > 0.4 ? '#fcd34d' : '#38bdf8',
           life: 1,
@@ -291,7 +294,6 @@
         spCtx.shadowBlur = 12;
         spCtx.fillStyle = p.color;
 
-        // Draw 4-point sparkle star
         spCtx.beginPath();
         spCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         spCtx.fill();
@@ -384,7 +386,6 @@
         document.getElementById('rubBar').style.width = rubProgress + '%';
         playRubSound(rubProgress);
 
-        // Emit sparkles from spout on rub
         emitSpoutSparkles(Math.floor(rubProgress / 20) + 2);
         lampImg.style.transform = `rotate(${(Math.random() - 0.5) * 8}deg) scale(1.06)`;
 
@@ -404,18 +405,16 @@
     window.addEventListener('touchmove', onPointerMove);
     window.addEventListener('touchend', onPointerUp);
 
-    // 5. Grand 5-Second Awakening Sequence (Pop out from lamp)
+    // 5. Grand 5-Second Awakening Sequence
     function startAwakening() {
       document.getElementById('rubInstructions').classList.add('hidden');
       playEmergenceFanfare();
 
-      // Continuous spout sparkle burst
       let burstInterval = setInterval(() => emitSpoutSparkles(8, true), 120);
 
       document.getElementById('subtitles').textContent = "💥 WHOOSH! Gold sparkles and sapphire smoke burst from the spout!";
 
       setTimeout(() => {
-        // Pop Genie Out
         const genieContainer = document.getElementById('genieContainer');
         const genieSprite = document.getElementById('genieSprite');
         genieContainer.classList.remove('hidden');
@@ -423,7 +422,6 @@
         genieSprite.classList.remove('genie-idle');
         genieSprite.classList.add('erupting');
 
-        // Confetti burst from spout
         confetti({ particleCount: 90, spread: 80, origin: { y: 0.65 } });
         document.getElementById('subtitles').textContent = "🌌 Look at him go! Emerging from the spout with cosmic stardust!";
       }, 1800);
@@ -470,7 +468,6 @@
 
       const sprite = document.getElementById('genieSprite');
 
-      // Add dynamic bounce & sparkle particles while speaking
       let talkSparkleInterval = null;
       utt.onstart = () => {
         sprite.classList.remove('genie-idle');
