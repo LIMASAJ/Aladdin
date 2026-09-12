@@ -13,7 +13,7 @@
 
   <style>
     body {
-      background: radial-gradient(circle at center, #20083c 0%, #0c0318 60%, #030107 100%);
+      background: radial-gradient(circle at 50% 40%, #20083c 0%, #0c0318 60%, #030107 100%);
       font-family: 'Quicksand', sans-serif;
       overflow: hidden;
     }
@@ -26,54 +26,54 @@
       filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.75)) drop-shadow(0 0 50px rgba(56, 189, 248, 0.4));
     }
     
-    /* Royal Palace Outer Frame */
+    /* Royal Palace Arch Outer Frame */
     .palace-arch {
-      box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.95), inset 0 0 20px rgba(245, 176, 65, 0.35);
+      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.95), inset 0 0 25px rgba(245, 176, 65, 0.35);
       border: 3px double rgba(245, 176, 65, 0.45);
     }
 
     /* Idle Bouncy Float Animation */
-    @keyframes genieShowmanFloat {
+    @keyframes genieFloat {
       0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-      25% { transform: translateY(-14px) rotate(2deg) scale(1.02); }
-      50% { transform: translateY(-4px) rotate(-1.5deg) scale(0.99); }
-      75% { transform: translateY(-18px) rotate(2deg) scale(1.03); }
+      25% { transform: translateY(-16px) rotate(2deg) scale(1.02); }
+      50% { transform: translateY(-6px) rotate(-1.5deg) scale(0.99); }
+      75% { transform: translateY(-20px) rotate(2.2deg) scale(1.03); }
     }
     .genie-idle {
-      animation: genieShowmanFloat 4.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+      animation: genieFloat 4.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
     }
 
     /* Active Speech Gestures & Body Movement */
     @keyframes talkingBounce {
       0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); }
-      20% { transform: translateY(-12px) scale(1.06) rotate(3deg); }
-      40% { transform: translateY(-4px) scale(1.02) rotate(-2deg); }
-      60% { transform: translateY(-16px) scale(1.08) rotate(4deg); }
-      80% { transform: translateY(-6px) scale(1.03) rotate(-1deg); }
+      20% { transform: translateY(-14px) scale(1.07) rotate(3deg); }
+      40% { transform: translateY(-5px) scale(1.02) rotate(-2deg); }
+      60% { transform: translateY(-18px) scale(1.09) rotate(4deg); }
+      80% { transform: translateY(-7px) scale(1.03) rotate(-1deg); }
     }
     .genie-talking {
       animation: talkingBounce 0.65s ease-in-out infinite !important;
     }
 
-    /* Pop out from Lamp Spout Animation */
+    /* Pop out from Lamp Spout Animation aligned directly with the spout */
     @keyframes eruptFromSpout {
       0% { 
-        transform: translate(60px, 160px) scale(0.02) rotate(-60deg); 
+        transform: translate(110px, 140px) scale(0.01) rotate(-55deg); 
         opacity: 0; 
-        filter: blur(16px) brightness(3);
+        filter: blur(18px) brightness(3);
       }
       35% { 
-        transform: translate(30px, 60px) scale(0.35) rotate(25deg); 
-        opacity: 0.8; 
+        transform: translate(60px, 40px) scale(0.35) rotate(20deg); 
+        opacity: 0.85; 
         filter: blur(8px) brightness(2);
       }
       70% { 
-        transform: translate(0px, -30px) scale(1.18) rotate(-6deg); 
+        transform: translate(0px, -35px) scale(1.18) rotate(-6deg); 
         opacity: 1; 
         filter: blur(0px) brightness(1.2);
       }
       85% { 
-        transform: translate(0px, 10px) scale(0.95) rotate(3deg); 
+        transform: translate(0px, 10px) scale(0.96) rotate(3deg); 
       }
       100% { 
         transform: translate(0px, 0px) scale(1) rotate(0deg); 
@@ -137,44 +137,32 @@
     </div>
 
     <!-- Center Stage: Lamp & Erupting Genie -->
-    <div id="stageContainer" class="flex flex-col items-center justify-center relative min-h-[420px]">
-      <!-- Rub Instruction & Gauge -->
+    <div id="stageContainer" class="flex flex-col items-center justify-center relative min-h-[440px]">
+      <!-- Rub Instruction & Progress Bar -->
       <div id="rubInstructions" class="text-center mb-4">
         <p class="font-royal text-2xl md:text-3xl text-amber-300 gold-glow font-bold animate-pulse">
           Rub the lamp to awaken the Genie!
         </p>
-        <p class="text-xs md:text-sm text-amber-200/80 mt-1">Rub back and forth with mouse or finger — wake him up!</p>
+        <p class="text-xs md:text-sm text-amber-200/80 mt-1">Rub back and forth with your mouse or finger — wake him up!</p>
         
         <div class="w-72 h-3.5 bg-black/85 border border-amber-500/60 rounded-full mx-auto mt-4 overflow-hidden shadow-[0_0_15px_rgba(245,176,65,0.4)] p-0.5">
           <div id="rubBar" class="h-full rounded-full bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-200 transition-all duration-100" style="width: 0%"></div>
         </div>
       </div>
 
-      <!-- LAMP WRAPPER -->
-      <div id="lampWrapper" class="cursor-grab active:cursor-grabbing relative transition-all duration-700 flex items-center justify-center min-w-[280px] min-h-[190px]">
-        <img 
-          id="lampImg"
-          src="lamp.png" 
-          alt="Magical Arabian Lamp"
-          onerror="this.onerror=null; this.src='https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8xNV8zZF9pbGx1c3RyYXRpb25fb2ZfYV9nb2xkZW5fbWFnaWNfbGFtcF9pc29sYXRlX2U0MGJmNjE0LTVmNTMtNGQwNS1iYjA5LTg4NDRhYzYxYTUyMS5wbmc.png';"
-          class="w-64 md:w-80 h-auto object-contain drop-shadow-[0_0_30px_rgba(245,176,65,0.75)] transition-transform duration-150 pointer-events-none select-none"
-        />
+      <!-- LAMP WRAPPER WITH TRANSPARENT AUTO-CHROMA CANVAS -->
+      <div id="lampWrapper" class="cursor-grab active:cursor-grabbing relative transition-all duration-700 flex items-center justify-center min-w-[300px] min-h-[190px]">
+        <canvas id="lampCanvas" class="w-72 md:w-96 h-auto drop-shadow-[0_0_35px_rgba(245,176,65,0.85)] transition-transform duration-150 pointer-events-none select-none"></canvas>
         <!-- Spout anchor point for smoke & sparkles -->
-        <div id="spoutPoint" class="absolute top-4 right-6 w-8 h-8 pointer-events-none"></div>
+        <div id="spoutPoint" class="absolute top-10 right-2 w-8 h-8 pointer-events-none"></div>
       </div>
 
-      <!-- GENIE CHARACTER SPRITE (Pops out directly above the lamp) -->
-      <div id="genieContainer" class="hidden flex-col items-center absolute -top-12 z-20 pointer-events-none">
+      <!-- GENIE CHARACTER SPRITE (Pops out from the lamp spout) -->
+      <div id="genieContainer" class="hidden flex-col items-center absolute -top-14 z-20 pointer-events-none">
         <div id="genieSprite" class="relative genie-idle transition-transform duration-300">
-          <!-- Backlight Halo -->
+          <!-- Backlight Aura Glow -->
           <div class="absolute inset-0 rounded-full bg-gradient-to-t from-cyan-500/50 via-blue-500/30 to-amber-300/40 blur-3xl -z-10 animate-pulse"></div>
-          <img 
-            id="genieImg"
-            src="genie.png" 
-            alt="Fun-Loving Genie" 
-            onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/3504/3504245.png';"
-            class="w-72 md:w-96 max-h-[440px] object-contain cyan-glow select-none pointer-events-none"
-          />
+          <canvas id="genieCanvas" class="w-72 md:w-96 max-h-[460px] cyan-glow select-none pointer-events-none"></canvas>
         </div>
       </div>
     </div>
@@ -216,6 +204,50 @@
   </div>
 
   <script>
+    // AUTO-CHROMA KEYER: Removes baked-in checkerboard pattern from fake PNGs
+    function loadAndKeyImage(src, canvasId, fallbackSrc) {
+      const cvs = document.getElementById(canvasId);
+      const c = cvs.getContext('2d');
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = src;
+
+      img.onload = () => processImage(img, cvs, c);
+      img.onerror = () => {
+        const fb = new Image();
+        fb.crossOrigin = "anonymous";
+        fb.src = fallbackSrc;
+        fb.onload = () => processImage(fb, cvs, c);
+      };
+    }
+
+    function processImage(img, cvs, c) {
+      cvs.width = img.naturalWidth || 600;
+      cvs.height = img.naturalHeight || 600;
+      c.drawImage(img, 0, 0);
+
+      try {
+        const frame = c.getImageData(0, 0, cvs.width, cvs.height);
+        const d = frame.data;
+        // Strip out light gray and white checkerboard pixels
+        for (let i = 0; i < d.length; i += 4) {
+          const r = d[i], g = d[i+1], b = d[i+2];
+          const isWhite = r > 235 && g > 235 && b > 235;
+          const isCheckerGray = Math.abs(r - g) < 10 && Math.abs(g - b) < 10 && r >= 180 && r <= 235;
+          if (isWhite || isCheckerGray) {
+            d[i+3] = 0; // Transparent
+          }
+        }
+        c.putImageData(frame, 0, 0);
+      } catch (e) {
+        c.drawImage(img, 0, 0);
+      }
+    }
+
+    // Load both custom images directly with backup online fallbacks
+    loadAndKeyImage('lamp_2.png', 'lampCanvas', 'lamp.png');
+    loadAndKeyImage('genie_2.png', 'genieCanvas', 'genie.png');
+
     // 1. Sky Canvas
     const skyCanvas = document.getElementById('skyCanvas');
     const skyCtx = skyCanvas.getContext('2d');
@@ -280,7 +312,7 @@
         const p = sparkles[i];
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += 0.15; // Gravity
+        p.vy += 0.15;
         p.life -= p.decay;
 
         if (p.life <= 0) {
@@ -362,12 +394,12 @@
       if (muted) window.speechSynthesis.cancel();
     }
 
-    // 4. Lamp Rubbing Mechanic & Spout Sparkles
+    // 4. Lamp Rubbing Mechanic
     let rubProgress = 0;
     let isRubbing = false;
     let lastX = 0, lastY = 0;
     const lampWrapper = document.getElementById('lampWrapper');
-    const lampImg = document.getElementById('lampImg');
+    const lampCanvas = document.getElementById('lampCanvas');
 
     function onPointerDown(e) {
       isRubbing = true;
@@ -387,7 +419,7 @@
         playRubSound(rubProgress);
 
         emitSpoutSparkles(Math.floor(rubProgress / 20) + 2);
-        lampImg.style.transform = `rotate(${(Math.random() - 0.5) * 8}deg) scale(1.06)`;
+        lampCanvas.style.transform = `rotate(${(Math.random() - 0.5) * 8}deg) scale(1.06)`;
 
         if (rubProgress >= 100) startAwakening();
       }
@@ -395,7 +427,7 @@
 
     function onPointerUp() { 
       isRubbing = false; 
-      lampImg.style.transform = 'rotate(0deg) scale(1)';
+      lampCanvas.style.transform = 'rotate(0deg) scale(1)';
     }
 
     lampWrapper.addEventListener('mousedown', onPointerDown);
@@ -411,7 +443,6 @@
       playEmergenceFanfare();
 
       let burstInterval = setInterval(() => emitSpoutSparkles(8, true), 120);
-
       document.getElementById('subtitles').textContent = "💥 WHOOSH! Gold sparkles and sapphire smoke burst from the spout!";
 
       setTimeout(() => {
