@@ -1,1 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Aladdin: The Three Wishes — Magical Genie Experience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Ambient Particle & Canvas Background -->
+  <canvas id="sky-canvas"></canvas>
+  <div class="vignette-overlay"></div>
 
+  <!-- Distant Desert / Palace Silhouettes -->
+  <div class="palace-backdrop" aria-hidden="true">
+    <div class="moon"></div>
+    <div class="dunes-far"></div>
+    <div class="palace-silhouettes"></div>
+    <div class="dunes-near"></div>
+  </div>
+
+  <!-- Top Header Navigation & Status -->
+  <header class="experience-header">
+    <div class="brand">
+      <span class="sparkle-icon">✨</span>
+      <h1>ALADDIN</h1>
+      <span class="subtitle">The Three Wishes</span>
+    </div>
+
+    <div class="top-controls">
+      <!-- Genie Mood Indicator -->
+      <div id="genie-mood-pill" class="mood-pill hidden" title="Genie's Current Disposition">
+        <span class="mood-dot"></span>
+        <span id="mood-label">PATIENT GENIE</span>
+      </div>
+
+      <!-- Sound Toggle -->
+      <button id="sound-toggle-btn" class="magical-btn icon-btn" aria-label="Toggle Audio">
+        <span id="sound-icon">🔊</span>
+        <span id="sound-text">SOUND ON</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Left Floating Wish Slots Tracker (Visible once Genie Awakens) -->
+  <aside id="wish-tracker-panel" class="wish-panel glass-panel hidden" aria-label="Wishes Progress">
+    <h3>YOUR WISHES</h3>
+    <div class="wish-slots">
+      <div class="wish-slot" id="slot-1" data-status="available">
+        <div class="slot-badge">✨</div>
+        <div class="slot-info">
+          <span class="slot-title">Wish #1</span>
+          <span class="slot-desc">Pending mortal desire...</span>
+        </div>
+      </div>
+      <div class="wish-slot" id="slot-2" data-status="locked">
+        <div class="slot-badge">🔒</div>
+        <div class="slot-info">
+          <span class="slot-title">Wish #2</span>
+          <span class="slot-desc">Locked</span>
+        </div>
+      </div>
+      <div class="wish-slot" id="slot-3" data-status="locked">
+        <div class="slot-badge">🔒</div>
+        <div class="slot-info">
+          <span class="slot-title">Wish #3</span>
+          <span class="slot-desc">Locked</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Stage Experience -->
+  <main id="main-stage">
+    
+    <!-- PHASE 1: THE LAMP RUBBING INTERACTION -->
+    <section id="lamp-stage" class="stage-section active">
+      <div class="instruction-box">
+        <h2 class="mystic-text">Rub the lamp to awaken the Genie…</h2>
+        <p class="sub-mystic">He’s been trapped in the dark for 10,000 years.</p>
+      </div>
+
+      <!-- Interactive Golden Lamp Container -->
+      <div id="lamp-container" class="lamp-interactive-wrapper" role="button" aria-label="Rub the magic lamp back and forth" tabindex="0">
+        <canvas id="rub-particle-canvas"></canvas>
+
+        <!-- Original Detailed Golden Lamp SVG -->
+        <svg id="magic-lamp-svg" viewBox="0 0 500 300" class="golden-lamp" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="lampGlowGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffe600" stop-opacity="0.9" />
+              <stop offset="50%" stop-color="#ff9900" stop-opacity="0.4" />
+              <stop offset="100%" stop-color="#ff7700" stop-opacity="0" />
+            </radialGradient>
+            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fff2a3" />
+              <stop offset="25%" stop-color="#e5a93b" />
+              <stop offset="60%" stop-color="#9a6414" />
+              <stop offset="85%" stop-color="#ffd56b" />
+              <stop offset="100%" stop-color="#643e06" />
+            </linearGradient>
+            <filter id="lampBloom" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="8" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+
+          <ellipse id="lamp-aura" cx="240" cy="180" rx="180" ry="80" fill="url(#lampGlowGrad)" opacity="0.3"/>
+
+          <!-- Lamp Spout Smoke Port -->
+          <circle id="spout-nozzle" cx="85" cy="115" r="9" fill="#ffd56b" />
+
+          <!-- Lamp Base -->
+          <path d="M 180 230 C 180 245, 170 260, 160 265 L 300 265 C 290 260, 280 245, 280 230 Z" fill="url(#goldGrad)" stroke="#533100" stroke-width="2" />
+          <ellipse cx="230" cy="265" rx="70" ry="10" fill="url(#goldGrad)" stroke="#ffd56b" stroke-width="1.5" />
+
+          <!-- Lamp Body -->
+          <path d="M 140 210 C 130 150, 240 140, 320 170 C 370 190, 340 235, 230 235 C 170 235, 145 225, 140 210 Z" fill="url(#goldGrad)" stroke="#4d2c00" stroke-width="3" filter="url(#lampBloom)"/>
+
+          <!-- Lamp Spout Curve -->
+          <path d="M 160 180 C 130 170, 90 140, 85 115 C 95 125, 130 160, 185 170 Z" fill="url(#goldGrad)" stroke="#ffd56b" stroke-width="2" />
+
+          <!-- Lamp Handle -->
+          <path d="M 310 180 C 390 130, 420 220, 325 220 C 345 205, 360 160, 310 180 Z" fill="url(#goldGrad)" stroke="#3e2100" stroke-width="2" />
+
+          <!-- Lamp Lid & Finial -->
+          <ellipse cx="240" cy="165" rx="40" ry="12" fill="url(#goldGrad)" stroke="#ffeaa7" stroke-width="1.5" />
+          <path d="M 235 160 C 235 145, 245 145, 245 160 Z" fill="#fff2a3" />
+          <circle cx="240" cy="142" r="6" fill="#ffe259" stroke="#9a6414" stroke-width="1.5" />
+
+          <!-- Engraved Magical Runes -->
+          <path d="M 195 200 Q 230 210 265 200" stroke="#ffd966" stroke-width="2" fill="none" stroke-dasharray="4,3" opacity="0.8"/>
+        </svg>
+
+        <!-- Dynamic Rub Progress Meter -->
+        <div class="rub-meter-bar" aria-hidden="true">
+          <div id="rub-progress-fill" class="rub-meter-fill"></div>
+        </div>
+        <span id="rub-hint-text" class="rub-pct">0% AWAKENED</span>
+
+        <button id="keyboard-rub-btn" class="magical-btn subtle-btn">Rub via Click / Key (Accessibility)</button>
+      </div>
+    </section>
+
+    <!-- PHASE 2: GENIE STAGE (AWAKENED, CINEMATIC, CHATTING) -->
+    <section id="genie-stage" class="stage-section hidden">
+      <div class="genie-interaction-container">
+        
+        <!-- Animated Original Fantasy Genie Character -->
+        <div id="genie-character" class="genie-entity idle">
+          <div class="genie-halo"></div>
+
+          <!-- Genie Smoke Tail / Base -->
+          <div class="genie-tail-container">
+            <div class="smoke-puff tail-puff-1"></div>
+            <div class="smoke-puff tail-puff-2"></div>
+            <div class="smoke-puff tail-puff-3"></div>
+            <div class="smoke-puff tail-puff-4"></div>
+          </div>
+
+          <!-- Genie Upper Body & Rig -->
+          <div class="genie-body-rig">
+            <!-- Torso / Waist Sash -->
+            <div class="genie-torso">
+              <div class="gold-vest"></div>
+              <div class="magic-gem-amulet"></div>
+            </div>
+
+            <!-- Left & Right Expressive Arms -->
+            <div class="genie-arm arm-left">
+              <div class="gold-cuff"></div>
+              <div class="genie-hand hand-left"></div>
+            </div>
+            <div class="genie-arm arm-right">
+              <div class="gold-cuff"></div>
+              <div class="genie-hand hand-right"></div>
+            </div>
+
+            <!-- Neck and Head -->
+            <div class="genie-head">
+              <!-- Golden Earring -->
+              <div class="genie-earring earring-left"></div>
+              
+              <!-- Original Hairstyle / Topknot / Flame Tail -->
+              <div class="genie-hair-topknot">
+                <div class="gold-hair-band"></div>
+                <div class="hair-flame"></div>
+              </div>
+
+              <!-- Face details -->
+              <div class="genie-face">
+                <!-- Eyebrows -->
+                <div class="eyebrows">
+                  <span class="eyebrow brow-left"></span>
+                  <span class="eyebrow brow-right"></span>
+                </div>
+                <!-- Eyes with Pupils -->
+                <div class="eyes">
+                  <div class="eye eye-left"><div class="pupil"></div></div>
+                  <div class="eye eye-right"><div class="pupil"></div></div>
+                </div>
+                <!-- Pointy Elven Ears -->
+                <div class="genie-ear ear-left"></div>
+                <div class="genie-ear ear-right"></div>
+                <!-- Expressive Beard / Chin -->
+                <div class="genie-goatee"></div>
+                <!-- Procedural Lip-Sync Animated Mouth -->
+                <div id="genie-mouth" class="mouth mouth-closed"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Subtitle Dialogue Banner -->
+        <div class="dialogue-wrapper">
+          <div id="genie-subtitles" class="cinematic-subtitles" aria-live="polite">
+            “FINALLY! Someone rubbed the lamp properly!”
+          </div>
+          <div id="speech-wave" class="speech-wave hidden">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <!-- Optional Wish Confirmation Modal Overlay -->
+        <div id="wish-confirm-modal" class="confirm-modal glass-panel hidden">
+          <p id="confirm-question-text">Is that officially your wish, mortal?</p>
+          <div class="confirm-actions">
+            <button id="btn-confirm-wish" class="magical-btn gold-glow">✨ MAKE IT MY WISH</button>
+            <button id="btn-cancel-wish" class="magical-btn subtle-btn">🤔 NOT YET</button>
+          </div>
+        </div>
+
+        <!-- Wish Review Card (Displays stats after a wish is made) -->
+        <div id="wish-stats-card" class="stats-card glass-panel hidden">
+          <div class="stats-header">
+            <span class="stats-badge">WISH GRANTED &amp; JUDGED</span>
+            <button id="stats-close-btn" class="stats-close" aria-label="Dismiss">&times;</button>
+          </div>
+          <h4 id="stats-wish-title">“Unlimited Pepperoni Pizza”</h4>
+
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-meta"><span>CREATIVITY</span><span id="stat-creativity">42%</span></div>
+              <div class="bar-bg"><div class="bar-fill" id="bar-creativity" style="width: 42%;"></div></div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-meta"><span>GREED</span><span id="stat-greed">85%</span></div>
+              <div class="bar-bg"><div class="bar-fill red" id="bar-greed" style="width: 85%;"></div></div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-meta"><span>CHAOS</span><span id="stat-chaos">60%</span></div>
+              <div class="bar-bg"><div class="bar-fill purple" id="bar-chaos" style="width: 60%;"></div></div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-meta"><span>PRACTICALITY</span><span id="stat-practicality">70%</span></div>
+              <div class="bar-bg"><div class="bar-fill cyan" id="bar-practicality" style="width: 70%;"></div></div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-meta"><span>MAIN CHARACTER ENERGY</span><span id="stat-mce">90%</span></div>
+              <div class="bar-bg"><div class="bar-fill gold" id="bar-mce" style="width: 90%;"></div></div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-meta"><span>GENIE APPROVAL</span><span id="stat-approval">50%</span></div>
+              <div class="bar-bg"><div class="bar-fill green" id="bar-approval" style="width: 50%;"></div></div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-meta"><span>REGRET POTENTIAL</span><span id="stat-regret">82%</span></div>
+              <div class="bar-bg"><div class="bar-fill orange" id="bar-regret" style="width: 82%;"></div></div>
+            </div>
+          </div>
+
+          <!-- "What You Could Have Wished For" section -->
+          <div id="could-have-wished" class="could-have-box">
+            <span class="could-label">💡 WHAT YOU COULD HAVE WISHED FOR:</span>
+            <ul id="could-list">
+              <li>Endless feasts from every cosmic galaxy</li>
+              <li>A personal 5-star celestial chef in a golden bottle</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PHASE 3: FINAL JUDGMENT OVERLAY -->
+    <section id="judgment-stage" class="stage-section hidden">
+      <div class="judgment-card glass-panel">
+        <h2 class="verdict-title">⚖️ THE GENIE HAS JUDGED YOU</h2>
+        <p class="verdict-sub">Three wishes made. The celestial scales have tipped.</p>
+
+        <div class="wishes-summary-list" id="final-wishes-summary">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <div class="final-verdict-banner">
+          <span class="verdict-tag">FINAL DESIGNATION</span>
+          <h3 id="verdict-badge-text">😂 CHAOTIC MENACE</h3>
+          <p id="verdict-speech-text">“After calculating your choices across 4 dimensions, I have concluded you shouldn't be trusted with a toaster, let alone magical cosmic omnipotence.”</p>
+        </div>
+
+        <div class="final-stats-summary" id="final-aggregate-stats">
+          <!-- Aggregate metrics -->
+        </div>
+
+        <button id="replay-btn" class="magical-btn gold-glow replay-btn">🔮 RUB THE LAMP AGAIN</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Interaction Panel (Voice + Text Inputs) -->
+  <footer id="interaction-bar" class="interaction-footer hidden">
+    <!-- Quick Status Toast / Loading Message -->
+    <div id="genie-status-toast" class="status-toast hidden">Consulting the ancient scrolls...</div>
+
+    <form id="chat-form" class="controls-form" onsubmit="return false;">
+      <!-- Voice Mic Button -->
+      <button type="button" id="mic-btn" class="magical-btn mic-btn" title="Speak to Genie using Microphone">
+        <span class="mic-icon">🎙️</span>
+        <span class="mic-label">TALK TO GENIE</span>
+      </button>
+
+      <!-- Text Input Fallback -->
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          id="user-input" 
+          autocomplete="off" 
+          placeholder="Tell the Genie anything, or ask your wish..." 
+          aria-label="Wish or message to Genie"
+        />
+        <button type="submit" id="send-btn" class="magical-btn send-btn" aria-label="Send Wish">
+          <span>✨ GRANT</span>
+        </button>
+      </div>
+    </form>
+  </footer>
+
+  <!-- Authorized Ginu Entrance & Ambient Media Asset Hook -->
+  <!-- Asset supplied: /mnt/data/ScreenRecording_09-12-2026 10-14-34_1.mov -->
+  <video id="authorized-media-asset" src="/mnt/data/ScreenRecording_09-12-2026 10-14-34_1.mov" preload="auto" playsinline style="display:none;"></video>
+
+  <script src="app.js"></script>
+</body>
+</html>
