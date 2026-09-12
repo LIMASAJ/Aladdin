@@ -2,347 +2,456 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Aladdin: The Three Wishes — Magical Genie Experience</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>✨ ALADDIN: THE THREE WISHES</title>
+  
+  <!-- Fonts & Tailwind CSS CDN -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            arabian: {
+              dark: '#05040a',
+              gold: '#f5b041',
+              goldLight: '#ffd97d',
+              goldDark: '#b7791f',
+              purple: '#1a0b2e'
+            }
+          },
+          fontFamily: {
+            royal: ['Cinzel', 'serif'],
+            body: ['Quicksand', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { background-color: #05040a; font-family: 'Quicksand', sans-serif; overflow: hidden; }
+    .gold-glow { text-shadow: 0 0 15px rgba(245, 176, 65, 0.7), 0 0 30px rgba(245, 176, 65, 0.4); }
+    @keyframes floatGentle {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    .floating { animation: floatGentle 4s ease-in-out infinite; }
+  </style>
 </head>
-<body>
-  <!-- Ambient Particle & Canvas Background -->
-  <canvas id="sky-canvas"></canvas>
-  <div class="vignette-overlay"></div>
 
-  <!-- Distant Desert / Palace Silhouettes -->
-  <div class="palace-backdrop" aria-hidden="true">
-    <div class="moon"></div>
-    <div class="dunes-far"></div>
-    <div class="palace-silhouettes"></div>
-    <div class="dunes-near"></div>
-  </div>
+<body class="w-screen h-screen flex flex-col justify-between p-4 md:p-6 text-slate-100 select-none">
+  <!-- Arabian Night Sky Canvas -->
+  <canvas id="skyCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
 
-  <!-- Top Header Navigation & Status -->
-  <header class="experience-header">
-    <div class="brand">
-      <span class="sparkle-icon">✨</span>
-      <h1>ALADDIN</h1>
-      <span class="subtitle">The Three Wishes</span>
-    </div>
-
-    <div class="top-controls">
-      <!-- Genie Mood Indicator -->
-      <div id="genie-mood-pill" class="mood-pill hidden" title="Genie's Current Disposition">
-        <span class="mood-dot"></span>
-        <span id="mood-label">PATIENT GENIE</span>
+  <!-- TOP HEADER -->
+  <header class="relative z-20 flex items-center justify-between w-full max-w-5xl mx-auto">
+    <h1 class="font-royal text-xl md:text-2xl font-black text-arabian-goldLight gold-glow tracking-widest flex items-center gap-2">
+      ✨ ALADDIN <span class="text-xs text-amber-200/70 font-normal">THE THREE WISHES</span>
+    </h1>
+    <div class="flex items-center gap-3">
+      <div id="moodBadge" class="hidden px-3 py-1 rounded-full bg-black/60 border border-amber-400/40 text-xs font-royal text-amber-300">
+        MOOD: <span id="moodText">CURIOUS GENIE</span>
       </div>
-
-      <!-- Sound Toggle -->
-      <button id="sound-toggle-btn" class="magical-btn icon-btn" aria-label="Toggle Audio">
-        <span id="sound-icon">🔊</span>
-        <span id="sound-text">SOUND ON</span>
+      <button id="muteBtn" onclick="toggleMute()" class="p-2 rounded-full bg-black/60 border border-amber-400/40 text-amber-300 hover:bg-amber-400 hover:text-black transition-all">
+        🔊
       </button>
     </div>
   </header>
 
-  <!-- Left Floating Wish Slots Tracker (Visible once Genie Awakens) -->
-  <aside id="wish-tracker-panel" class="wish-panel glass-panel hidden" aria-label="Wishes Progress">
-    <h3>YOUR WISHES</h3>
-    <div class="wish-slots">
-      <div class="wish-slot" id="slot-1" data-status="available">
-        <div class="slot-badge">✨</div>
-        <div class="slot-info">
-          <span class="slot-title">Wish #1</span>
-          <span class="slot-desc">Pending mortal desire...</span>
-        </div>
+  <!-- CENTER INTERACTIVE ARENA -->
+  <main class="relative z-10 flex-1 flex flex-col md:flex-row items-center justify-center gap-6 max-w-5xl mx-auto w-full">
+    <!-- Wish List Panel (Shown when Genie awakes) -->
+    <div id="wishPanel" class="hidden w-full md:w-72 bg-black/60 backdrop-blur-md border border-amber-400/30 rounded-2xl p-4 shadow-xl">
+      <div class="flex justify-between items-center mb-3 pb-2 border-b border-amber-400/20">
+        <span class="font-royal text-sm font-bold text-amber-300">YOUR WISHES</span>
+        <span id="wishCounter" class="text-xs px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-200">0/3</span>
       </div>
-      <div class="wish-slot" id="slot-2" data-status="locked">
-        <div class="slot-badge">🔒</div>
-        <div class="slot-info">
-          <span class="slot-title">Wish #2</span>
-          <span class="slot-desc">Locked</span>
-        </div>
+      <div class="space-y-2 text-xs" id="wishList">
+        <div id="slot1" class="p-2.5 rounded-xl border border-amber-400/40 bg-amber-400/10">✨ Wish #1 — READY TO WISH</div>
+        <div id="slot2" class="p-2.5 rounded-xl border border-slate-700 bg-slate-900/40 opacity-50">🔒 Wish #2 — LOCKED</div>
+        <div id="slot3" class="p-2.5 rounded-xl border border-slate-700 bg-slate-900/40 opacity-50">🔒 Wish #3 — LOCKED</div>
       </div>
-      <div class="wish-slot" id="slot-3" data-status="locked">
-        <div class="slot-badge">🔒</div>
-        <div class="slot-info">
-          <span class="slot-title">Wish #3</span>
-          <span class="slot-desc">Locked</span>
-        </div>
+      <!-- What you could have wished for -->
+      <div id="altBox" class="hidden mt-3 p-2.5 rounded-xl bg-purple-950/40 border border-purple-400/30 text-[11px] text-purple-200">
+        <div class="font-bold text-amber-300 mb-1">WHAT YOU COULD HAVE WISHED FOR:</div>
+        <ul id="altList" class="list-disc list-inside text-slate-300 space-y-0.5"></ul>
       </div>
     </div>
-  </aside>
 
-  <!-- Main Stage Experience -->
-  <main id="main-stage">
-    
-    <!-- PHASE 1: THE LAMP RUBBING INTERACTION -->
-    <section id="lamp-stage" class="stage-section active">
-      <div class="instruction-box">
-        <h2 class="mystic-text">Rub the lamp to awaken the Genie…</h2>
-        <p class="sub-mystic">He’s been trapped in the dark for 10,000 years.</p>
+    <!-- Center Display: Lamp & Genie -->
+    <div class="flex flex-col items-center justify-center relative min-h-[360px]">
+      <!-- Rub Instruction & Gauge -->
+      <div id="rubInstructions" class="text-center mb-4">
+        <p class="font-royal text-xl md:text-2xl text-amber-300 gold-glow font-bold animate-pulse">
+          Rub the lamp to awaken the Genie…
+        </p>
+        <p class="text-xs text-amber-200/70 mt-1">Drag your mouse or finger across the brass</p>
+        <div class="w-64 h-2.5 bg-black/60 border border-amber-400/60 rounded-full mx-auto mt-3 overflow-hidden">
+          <div id="rubBar" class="h-full bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-200 transition-all duration-100" style="width: 0%"></div>
+        </div>
       </div>
 
-      <!-- Interactive Golden Lamp Container -->
-      <div id="lamp-container" class="lamp-interactive-wrapper" role="button" aria-label="Rub the magic lamp back and forth" tabindex="0">
-        <canvas id="rub-particle-canvas"></canvas>
-
-        <!-- Original Detailed Golden Lamp SVG -->
-        <svg id="magic-lamp-svg" viewBox="0 0 500 300" class="golden-lamp" xmlns="http://www.w3.org/2000/svg">
+      <!-- Lamp -->
+      <div id="lampWrapper" class="cursor-grab active:cursor-grabbing floating relative">
+        <svg id="lampSvg" width="340" height="200" viewBox="0 0 500 300" class="w-64 md:w-80 filter drop-shadow-[0_0_20px_rgba(245,176,65,0.4)]">
           <defs>
-            <radialGradient id="lampGlowGrad" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#ffe600" stop-opacity="0.9" />
-              <stop offset="50%" stop-color="#ff9900" stop-opacity="0.4" />
-              <stop offset="100%" stop-color="#ff7700" stop-opacity="0" />
-            </radialGradient>
-            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#fff2a3" />
-              <stop offset="25%" stop-color="#e5a93b" />
-              <stop offset="60%" stop-color="#9a6414" />
-              <stop offset="85%" stop-color="#ffd56b" />
-              <stop offset="100%" stop-color="#643e06" />
+            <linearGradient id="goldBrass" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#ffd778" /><stop offset="35%" stopColor="#d4af37" /><stop offset="70%" stopColor="#fef08a" /><stop offset="100%" stopColor="#68470a" />
             </linearGradient>
-            <filter id="lampBloom" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="8" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
+          </defs>
+          <ellipse cx="250" cy="275" rx="85" ry="18" fill="url(#goldBrass)" stroke="#ffe082" />
+          <path d="M160,205 C110,185 105,130 190,120 C280,110 330,135 345,185 C350,215 310,235 250,235 Z" fill="url(#goldBrass)" stroke="#fff" stroke-width="1.5" />
+          <circle cx="250" cy="175" r="9" fill="#9f1239" stroke="#fef08a" stroke-width="2" />
+          <path d="M340,150 C380,140 430,90 445,45 C450,35 440,35 430,42 C400,65 345,115 315,135 Z" fill="url(#goldBrass)" stroke="#fef08a" stroke-width="1.5" />
+          <path d="M150,165 C85,145 60,65 125,50 C165,40 180,95 160,125 C145,145 130,130 145,100 C155,80 135,65 115,75 C85,90 105,135 140,155 Z" fill="url(#goldBrass)" stroke="#68470a" stroke-width="1.5" />
+          <path d="M220,120 C220,105 240,95 250,95 C260,95 280,105 280,120 Z" fill="url(#goldBrass)" stroke="#fff" />
+        </svg>
+      </div>
+
+      <!-- Genie Character Rig (Hidden initially) -->
+      <div id="genieContainer" class="hidden flex-col items-center relative transition-all duration-1000">
+        <svg id="genieSvg" width="360" height="420" viewBox="0 0 400 480" class="w-64 md:w-80 floating filter drop-shadow-[0_0_30px_rgba(56,189,248,0.6)]">
+          <defs>
+            <linearGradient id="genieSkin" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#7dd3fc" /><stop offset="50%" stopColor="#38bdf8" /><stop offset="100%" stopColor="#0284c7" />
+            </linearGradient>
+            <linearGradient id="smokeTail" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" stopColor="#0284c7" /><stop offset="60%" stopColor="#38bdf8" stop-opacity="0.8" /><stop offset="100%" stopColor="#f5b041" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="goldAcc" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#fef08a" /><stop offset="100%" stopColor="#a16207" />
+            </linearGradient>
           </defs>
 
-          <ellipse id="lamp-aura" cx="240" cy="180" rx="180" ry="80" fill="url(#lampGlowGrad)" opacity="0.3"/>
+          <!-- Smoke Tail -->
+          <path d="M175,340 C140,370 130,410 185,440 C240,470 200,480 200,480 C200,480 270,440 220,400 C170,360 215,350 225,340 Z" fill="url(#smokeTail)" />
+          
+          <!-- Torso & Arms -->
+          <path d="M130,195 C85,215 70,250 85,285 C95,305 110,295 105,275 C95,250 115,225 145,210 Z" fill="url(#genieSkin)" />
+          <path d="M270,195 C315,215 330,250 315,285 C305,305 290,295 295,275 C305,250 285,225 255,210 Z" fill="url(#genieSkin)" />
+          <rect x="78" y="260" width="22" height="24" rx="4" fill="url(#goldAcc)" />
+          <rect x="300" y="260" width="22" height="24" rx="4" fill="url(#goldAcc)" />
+          
+          <path d="M130,185 C125,260 160,335 200,340 C240,335 275,260 270,185 Z" fill="url(#genieSkin)" stroke="#0369a1" stroke-width="2" />
+          <path d="M132,185 Q165,260 170,320 L135,310 Z" fill="#881337" stroke="url(#goldAcc)" stroke-width="2" />
+          <path d="M268,185 Q235,260 230,320 L265,310 Z" fill="#881337" stroke="url(#goldAcc)" stroke-width="2" />
 
-          <!-- Lamp Spout Smoke Port -->
-          <circle id="spout-nozzle" cx="85" cy="115" r="9" fill="#ffd56b" />
+          <!-- Head, Ears, Turban -->
+          <path d="M150,115 C150,60 250,60 250,115 C250,155 235,170 200,170 C165,170 150,155 150,115 Z" fill="url(#genieSkin)" />
+          <path d="M150,110 C130,105 110,85 125,75 C140,85 148,95 150,110 Z" fill="url(#genieSkin)" />
+          <path d="M250,110 C270,105 290,85 275,75 C260,85 252,95 250,110 Z" fill="url(#genieSkin)" />
+          <path d="M142,85 C140,40 260,40 258,85 Z" fill="#4c0519" stroke="url(#goldAcc)" stroke-width="3" />
+          <circle cx="200" cy="65" r="8" fill="url(#goldAcc)" />
 
-          <!-- Lamp Base -->
-          <path d="M 180 230 C 180 245, 170 260, 160 265 L 300 265 C 290 260, 280 245, 280 230 Z" fill="url(#goldGrad)" stroke="#533100" stroke-width="2" />
-          <ellipse cx="230" cy="265" rx="70" ry="10" fill="url(#goldGrad)" stroke="#ffd56b" stroke-width="1.5" />
+          <!-- Face Features -->
+          <g id="genieEyes">
+            <ellipse cx="178" cy="108" rx="8" ry="7" fill="#fff" />
+            <ellipse cx="222" cy="108" rx="8" ry="7" fill="#fff" />
+            <circle cx="178" cy="108" r="4" fill="#f59e0b" />
+            <circle cx="222" cy="108" r="4" fill="#f59e0b" />
+            <circle cx="178" cy="108" r="2" fill="#000" />
+            <circle cx="222" cy="108" r="2" fill="#000" />
+          </g>
+          <!-- Eyebrows -->
+          <path d="M165,96 Q180,88 192,94" stroke="#082f49" stroke-width="4" stroke-linecap="round" fill="none" />
+          <path d="M235,96 Q220,88 208,94" stroke="#082f49" stroke-width="4" stroke-linecap="round" fill="none" />
+          <!-- Nose & Beard -->
+          <path d="M200,105 L204,124 L196,126" stroke="#0369a1" stroke-width="2.5" fill="none" />
+          <path d="M195,152 C195,175 190,185 205,188 C215,188 210,175 205,152 Z" fill="#082f49" />
 
-          <!-- Lamp Body -->
-          <path d="M 140 210 C 130 150, 240 140, 320 170 C 370 190, 340 235, 230 235 C 170 235, 145 225, 140 210 Z" fill="url(#goldGrad)" stroke="#4d2c00" stroke-width="3" filter="url(#lampBloom)"/>
-
-          <!-- Lamp Spout Curve -->
-          <path d="M 160 180 C 130 170, 90 140, 85 115 C 95 125, 130 160, 185 170 Z" fill="url(#goldGrad)" stroke="#ffd56b" stroke-width="2" />
-
-          <!-- Lamp Handle -->
-          <path d="M 310 180 C 390 130, 420 220, 325 220 C 345 205, 360 160, 310 180 Z" fill="url(#goldGrad)" stroke="#3e2100" stroke-width="2" />
-
-          <!-- Lamp Lid & Finial -->
-          <ellipse cx="240" cy="165" rx="40" ry="12" fill="url(#goldGrad)" stroke="#ffeaa7" stroke-width="1.5" />
-          <path d="M 235 160 C 235 145, 245 145, 245 160 Z" fill="#fff2a3" />
-          <circle cx="240" cy="142" r="6" fill="#ffe259" stroke="#9a6414" stroke-width="1.5" />
-
-          <!-- Engraved Magical Runes -->
-          <path d="M 195 200 Q 230 210 265 200" stroke="#ffd966" stroke-width="2" fill="none" stroke-dasharray="4,3" opacity="0.8"/>
+          <!-- Dynamic Mouth (Lip Sync changes this path) -->
+          <path id="genieMouth" d="M182,138 Q200,150 220,136" stroke="#082f49" stroke-width="3" stroke-linecap="round" fill="none" />
         </svg>
-
-        <!-- Dynamic Rub Progress Meter -->
-        <div class="rub-meter-bar" aria-hidden="true">
-          <div id="rub-progress-fill" class="rub-meter-fill"></div>
-        </div>
-        <span id="rub-hint-text" class="rub-pct">0% AWAKENED</span>
-
-        <button id="keyboard-rub-btn" class="magical-btn subtle-btn">Rub via Click / Key (Accessibility)</button>
       </div>
-    </section>
-
-    <!-- PHASE 2: GENIE STAGE (AWAKENED, CINEMATIC, CHATTING) -->
-    <section id="genie-stage" class="stage-section hidden">
-      <div class="genie-interaction-container">
-        
-        <!-- Animated Original Fantasy Genie Character -->
-        <div id="genie-character" class="genie-entity idle">
-          <div class="genie-halo"></div>
-
-          <!-- Genie Smoke Tail / Base -->
-          <div class="genie-tail-container">
-            <div class="smoke-puff tail-puff-1"></div>
-            <div class="smoke-puff tail-puff-2"></div>
-            <div class="smoke-puff tail-puff-3"></div>
-            <div class="smoke-puff tail-puff-4"></div>
-          </div>
-
-          <!-- Genie Upper Body & Rig -->
-          <div class="genie-body-rig">
-            <!-- Torso / Waist Sash -->
-            <div class="genie-torso">
-              <div class="gold-vest"></div>
-              <div class="magic-gem-amulet"></div>
-            </div>
-
-            <!-- Left & Right Expressive Arms -->
-            <div class="genie-arm arm-left">
-              <div class="gold-cuff"></div>
-              <div class="genie-hand hand-left"></div>
-            </div>
-            <div class="genie-arm arm-right">
-              <div class="gold-cuff"></div>
-              <div class="genie-hand hand-right"></div>
-            </div>
-
-            <!-- Neck and Head -->
-            <div class="genie-head">
-              <!-- Golden Earring -->
-              <div class="genie-earring earring-left"></div>
-              
-              <!-- Original Hairstyle / Topknot / Flame Tail -->
-              <div class="genie-hair-topknot">
-                <div class="gold-hair-band"></div>
-                <div class="hair-flame"></div>
-              </div>
-
-              <!-- Face details -->
-              <div class="genie-face">
-                <!-- Eyebrows -->
-                <div class="eyebrows">
-                  <span class="eyebrow brow-left"></span>
-                  <span class="eyebrow brow-right"></span>
-                </div>
-                <!-- Eyes with Pupils -->
-                <div class="eyes">
-                  <div class="eye eye-left"><div class="pupil"></div></div>
-                  <div class="eye eye-right"><div class="pupil"></div></div>
-                </div>
-                <!-- Pointy Elven Ears -->
-                <div class="genie-ear ear-left"></div>
-                <div class="genie-ear ear-right"></div>
-                <!-- Expressive Beard / Chin -->
-                <div class="genie-goatee"></div>
-                <!-- Procedural Lip-Sync Animated Mouth -->
-                <div id="genie-mouth" class="mouth mouth-closed"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Dynamic Subtitle Dialogue Banner -->
-        <div class="dialogue-wrapper">
-          <div id="genie-subtitles" class="cinematic-subtitles" aria-live="polite">
-            “FINALLY! Someone rubbed the lamp properly!”
-          </div>
-          <div id="speech-wave" class="speech-wave hidden">
-            <span></span><span></span><span></span><span></span><span></span>
-          </div>
-        </div>
-
-        <!-- Optional Wish Confirmation Modal Overlay -->
-        <div id="wish-confirm-modal" class="confirm-modal glass-panel hidden">
-          <p id="confirm-question-text">Is that officially your wish, mortal?</p>
-          <div class="confirm-actions">
-            <button id="btn-confirm-wish" class="magical-btn gold-glow">✨ MAKE IT MY WISH</button>
-            <button id="btn-cancel-wish" class="magical-btn subtle-btn">🤔 NOT YET</button>
-          </div>
-        </div>
-
-        <!-- Wish Review Card (Displays stats after a wish is made) -->
-        <div id="wish-stats-card" class="stats-card glass-panel hidden">
-          <div class="stats-header">
-            <span class="stats-badge">WISH GRANTED &amp; JUDGED</span>
-            <button id="stats-close-btn" class="stats-close" aria-label="Dismiss">&times;</button>
-          </div>
-          <h4 id="stats-wish-title">“Unlimited Pepperoni Pizza”</h4>
-
-          <div class="stats-grid">
-            <div class="stat-item">
-              <div class="stat-meta"><span>CREATIVITY</span><span id="stat-creativity">42%</span></div>
-              <div class="bar-bg"><div class="bar-fill" id="bar-creativity" style="width: 42%;"></div></div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-meta"><span>GREED</span><span id="stat-greed">85%</span></div>
-              <div class="bar-bg"><div class="bar-fill red" id="bar-greed" style="width: 85%;"></div></div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-meta"><span>CHAOS</span><span id="stat-chaos">60%</span></div>
-              <div class="bar-bg"><div class="bar-fill purple" id="bar-chaos" style="width: 60%;"></div></div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-meta"><span>PRACTICALITY</span><span id="stat-practicality">70%</span></div>
-              <div class="bar-bg"><div class="bar-fill cyan" id="bar-practicality" style="width: 70%;"></div></div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-meta"><span>MAIN CHARACTER ENERGY</span><span id="stat-mce">90%</span></div>
-              <div class="bar-bg"><div class="bar-fill gold" id="bar-mce" style="width: 90%;"></div></div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-meta"><span>GENIE APPROVAL</span><span id="stat-approval">50%</span></div>
-              <div class="bar-bg"><div class="bar-fill green" id="bar-approval" style="width: 50%;"></div></div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-meta"><span>REGRET POTENTIAL</span><span id="stat-regret">82%</span></div>
-              <div class="bar-bg"><div class="bar-fill orange" id="bar-regret" style="width: 82%;"></div></div>
-            </div>
-          </div>
-
-          <!-- "What You Could Have Wished For" section -->
-          <div id="could-have-wished" class="could-have-box">
-            <span class="could-label">💡 WHAT YOU COULD HAVE WISHED FOR:</span>
-            <ul id="could-list">
-              <li>Endless feasts from every cosmic galaxy</li>
-              <li>A personal 5-star celestial chef in a golden bottle</li>
-            </ul>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- PHASE 3: FINAL JUDGMENT OVERLAY -->
-    <section id="judgment-stage" class="stage-section hidden">
-      <div class="judgment-card glass-panel">
-        <h2 class="verdict-title">⚖️ THE GENIE HAS JUDGED YOU</h2>
-        <p class="verdict-sub">Three wishes made. The celestial scales have tipped.</p>
-
-        <div class="wishes-summary-list" id="final-wishes-summary">
-          <!-- Populated dynamically via JS -->
-        </div>
-
-        <div class="final-verdict-banner">
-          <span class="verdict-tag">FINAL DESIGNATION</span>
-          <h3 id="verdict-badge-text">😂 CHAOTIC MENACE</h3>
-          <p id="verdict-speech-text">“After calculating your choices across 4 dimensions, I have concluded you shouldn't be trusted with a toaster, let alone magical cosmic omnipotence.”</p>
-        </div>
-
-        <div class="final-stats-summary" id="final-aggregate-stats">
-          <!-- Aggregate metrics -->
-        </div>
-
-        <button id="replay-btn" class="magical-btn gold-glow replay-btn">🔮 RUB THE LAMP AGAIN</button>
-      </div>
-    </section>
-
+    </div>
   </main>
 
-  <!-- Bottom Interaction Panel (Voice + Text Inputs) -->
-  <footer id="interaction-bar" class="interaction-footer hidden">
-    <!-- Quick Status Toast / Loading Message -->
-    <div id="genie-status-toast" class="status-toast hidden">Consulting the ancient scrolls...</div>
+  <!-- BOTTOM: Subtitles & Voice/Text Inputs -->
+  <footer class="relative z-20 flex flex-col items-center gap-3 w-full max-w-2xl mx-auto">
+    <!-- Subtitle Bar -->
+    <div id="subtitles" class="w-full bg-black/80 backdrop-blur-md border border-amber-400/40 rounded-2xl p-3 text-center text-sm md:text-base text-amber-100 italic min-h-[48px] flex items-center justify-center shadow-lg">
+      "Rub the magical lamp above to break my centuries of slumber..."
+    </div>
 
-    <form id="chat-form" class="controls-form" onsubmit="return false;">
-      <!-- Voice Mic Button -->
-      <button type="button" id="mic-btn" class="magical-btn mic-btn" title="Speak to Genie using Microphone">
-        <span class="mic-icon">🎙️</span>
-        <span class="mic-label">TALK TO GENIE</span>
+    <!-- Input Form -->
+    <form id="inputForm" onsubmit="handleSend(event)" class="hidden w-full items-center gap-2 bg-slate-950/90 border border-amber-400/50 rounded-full p-1.5 pl-4 shadow-xl">
+      <button type="button" id="micBtn" onclick="toggleMic()" class="p-2.5 rounded-full bg-amber-400/20 text-amber-300 hover:bg-amber-400 hover:text-black transition-all">
+        🎙️
       </button>
-
-      <!-- Text Input Fallback -->
-      <div class="input-wrapper">
-        <input 
-          type="text" 
-          id="user-input" 
-          autocomplete="off" 
-          placeholder="Tell the Genie anything, or ask your wish..." 
-          aria-label="Wish or message to Genie"
-        />
-        <button type="submit" id="send-btn" class="magical-btn send-btn" aria-label="Send Wish">
-          <span>✨ GRANT</span>
-        </button>
-      </div>
+      <input type="text" id="userInput" placeholder="State your wish or speak to the Genie..." class="flex-1 bg-transparent border-none outline-none text-sm text-slate-100 placeholder-amber-200/40" />
+      <button type="submit" class="px-5 py-2.5 bg-gradient-to-r from-amber-600 to-amber-400 text-slate-950 font-bold rounded-full hover:brightness-110">
+        SEND
+      </button>
     </form>
   </footer>
 
-  <!-- Authorized Ginu Entrance & Ambient Media Asset Hook -->
-  <!-- Asset supplied: /mnt/data/ScreenRecording_09-12-2026 10-14-34_1.mov -->
-  <video id="authorized-media-asset" src="/mnt/data/ScreenRecording_09-12-2026 10-14-34_1.mov" preload="auto" playsinline style="display:none;"></video>
+  <!-- FINAL JUDGMENT MODAL -->
+  <div id="judgmentModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl">
+    <div class="bg-gradient-to-b from-slate-900 to-black border-2 border-amber-400 rounded-3xl p-6 md:p-8 max-w-lg w-full text-center shadow-2xl">
+      <div class="text-4xl mb-2">⚖️</div>
+      <h2 class="font-royal text-2xl font-bold text-amber-300 tracking-wider">THE GENIE HAS JUDGED YOU</h2>
+      <div id="verdictTag" class="inline-block my-3 px-5 py-1.5 rounded-full bg-amber-400/20 border border-amber-400 text-amber-300 font-royal font-black text-xl"></div>
+      <p id="verdictSpeech" class="text-xs md:text-sm text-amber-100/90 italic mb-4 leading-relaxed"></p>
 
-  <script src="app.js"></script>
+      <!-- Stats -->
+      <div id="statsBox" class="space-y-2 text-left bg-black/40 p-4 rounded-xl border border-amber-400/20 mb-5 text-xs text-amber-200"></div>
+
+      <button onclick="location.reload()" class="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-yellow-300 text-slate-950 font-royal font-black rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all">
+        🔮 RUB THE LAMP AGAIN
+      </button>
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // 1. Arabian Sky Particle Animation
+    const canvas = document.getElementById('skyCanvas');
+    const ctx = canvas.getContext('2d');
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const stars = Array.from({ length: 80 }, () => ({
+      x: Math.random() * canvas.width, y: Math.random() * (canvas.height * 0.7),
+      r: Math.random() * 2 + 0.5, alpha: Math.random()
+    }));
+
+    function drawSky() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      grad.addColorStop(0, '#04020a'); grad.addColorStop(0.5, '#0c071e'); grad.addColorStop(1, '#280c35');
+      ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Moon
+      const mx = canvas.width * 0.85, my = canvas.height * 0.18;
+      ctx.save(); ctx.shadowColor = '#fef08a'; ctx.shadowBlur = 35;
+      ctx.beginPath(); ctx.arc(mx, my, 40, 0, Math.PI * 2); ctx.fillStyle = '#fff9db'; ctx.fill();
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath(); ctx.arc(mx + 15, my - 8, 35, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+
+      // Stars
+      stars.forEach(s => {
+        s.alpha += (Math.random() - 0.5) * 0.05;
+        s.alpha = Math.max(0.1, Math.min(1, s.alpha));
+        ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha})`;
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+      });
+      requestAnimationFrame(drawSky);
+    }
+    drawSky();
+
+    // 2. Procedural Web Audio (Arabian Chords + Friction)
+    let audioCtx = null;
+    let muted = false;
+    function initAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    function playRubSound(prog) {
+      if (muted) return;
+      initAudio();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(200 + prog * 4, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    }
+    function playEmergenceSound() {
+      if (muted) return;
+      initAudio();
+      [140, 293, 370, 440, 587].forEach((f, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.setValueAtTime(f, audioCtx.currentTime + i * 0.3);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime + i * 0.3);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.3 + 1.2);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + i * 0.3);
+        osc.stop(audioCtx.currentTime + i * 0.3 + 1.3);
+      });
+    }
+    function toggleMute() {
+      muted = !muted;
+      document.getElementById('muteBtn').textContent = muted ? '🔇' : '🔊';
+      if (muted) window.speechSynthesis.cancel();
+    }
+
+    // 3. Lamp Rubbing Mechanic
+    let rubProgress = 0;
+    let isRubbing = false;
+    let lastX = 0, lastY = 0;
+    const lampWrapper = document.getElementById('lampWrapper');
+
+    function onPointerDown(e) {
+      isRubbing = true;
+      lastX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+      lastY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+    }
+    function onPointerMove(e) {
+      if (!isRubbing || rubProgress >= 100) return;
+      const x = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+      const y = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+      const dist = Math.abs(x - lastX) + Math.abs(y - lastY);
+      if (dist > 10) {
+        lastX = x; lastY = y;
+        rubProgress = Math.min(100, rubProgress + 2.5);
+        document.getElementById('rubBar').style.width = rubProgress + '%';
+        playRubSound(rubProgress);
+        if (rubProgress >= 100) startAwakening();
+      }
+    }
+    function onPointerUp() { isRubbing = false; }
+
+    lampWrapper.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('mouseup', onPointerUp);
+    lampWrapper.addEventListener('touchstart', onPointerDown);
+    window.addEventListener('touchmove', onPointerMove);
+    window.addEventListener('touchend', onPointerUp);
+
+    // 4. 5-Second Awakening Sequence
+    function startAwakening() {
+      document.getElementById('rubInstructions').classList.add('hidden');
+      lampWrapper.classList.add('scale-50', 'opacity-60', 'transition-all', 'duration-1000');
+      playEmergenceSound();
+
+      document.getElementById('subtitles').textContent = "💨 The brass heats up... smoke erupts from the spout!";
+
+      setTimeout(() => {
+        document.getElementById('genieContainer').classList.remove('hidden');
+        document.getElementById('genieContainer').classList.add('animate-pulse');
+        document.getElementById('subtitles').textContent = "🌌 A majestic silhouette stretches its arms after 10,000 years...";
+      }, 2000);
+
+      setTimeout(() => {
+        document.getElementById('genieContainer').classList.remove('animate-pulse');
+        document.getElementById('wishPanel').classList.remove('hidden');
+        document.getElementById('inputForm').classList.remove('hidden');
+        document.getElementById('inputForm').classList.add('flex');
+        document.getElementById('moodBadge').classList.remove('hidden');
+
+        const introText = "FINALLY! Ten thousand years in a brass kettle with ZERO legroom! Look at you, mortal. You have THREE wishes. Not four! And don't try the 'more wishes' cheat. Now... what ridiculous thing are we wishing for first?";
+        genieSpeak(introText);
+      }, 5000);
+    }
+
+    // 5. Speech Synthesis & Mouth Lip-sync
+    function genieSpeak(text) {
+      document.getElementById('subtitles').textContent = `"${text}"`;
+      if (muted || !('speechSynthesis' in window)) return;
+
+      window.speechSynthesis.cancel();
+      const utt = new SpeechSynthesisUtterance(text);
+      utt.pitch = 0.92;
+      utt.rate = 1.05;
+
+      const mouth = document.getElementById('genieMouth');
+      let interval = setInterval(() => {
+        mouth.setAttribute('d', Math.random() > 0.5 ? "M182,138 Q200,165 218,138 Q200,146 182,138 Z" : "M182,138 Q200,150 220,136");
+      }, 130);
+
+      utt.onend = () => {
+        clearInterval(interval);
+        mouth.setAttribute('d', "M182,138 Q200,150 220,136");
+      };
+      window.speechSynthesis.speak(utt);
+    }
+
+    // 6. Conversational Brain & Wish Scoring
+    let wishes = [];
+    function handleSend(e) {
+      e.preventDefault();
+      const input = document.getElementById('userInput');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+
+      if (wishes.length < 3) {
+        // Record as wish
+        const wishNumber = wishes.length + 1;
+        const stats = {
+          creativity: Math.floor(Math.random() * 40) + 40,
+          greed: text.toLowerCase().includes('money') || text.toLowerCase().includes('rich') ? 95 : Math.floor(Math.random() * 50) + 30,
+          chaos: Math.floor(Math.random() * 50) + 45
+        };
+        wishes.push({ text, stats });
+
+        // Update slots
+        const currentSlot = document.getElementById(`slot${wishNumber}`);
+        currentSlot.className = "p-2.5 rounded-xl border border-emerald-500/50 bg-emerald-950/40";
+        currentSlot.innerHTML = `<span class="text-emerald-400 font-bold">✓ Wish #${wishNumber}:</span> "${text}"`;
+
+        if (wishNumber < 3) {
+          const nextSlot = document.getElementById(`slot${wishNumber + 1}`);
+          nextSlot.className = "p-2.5 rounded-xl border border-amber-400/40 bg-amber-400/10";
+          nextSlot.innerHTML = `✨ Wish #${wishNumber + 1} — READY TO WISH`;
+        }
+        document.getElementById('wishCounter').textContent = `${wishes.length}/3`;
+
+        // "What you could have wished for"
+        document.getElementById('altBox').classList.remove('hidden');
+        document.getElementById('altList').innerHTML = `
+          <li>Unlimited flying Persian rugs with GPS</li>
+          <li>A pizza volcano that never cools down</li>
+        `;
+
+        const reply = `Wish #${wishNumber} is sealed! "${text}". Greed level: ${stats.greed}%. Frankly, I've heard wiser wishes from camel merchants, but so be it!`;
+        genieSpeak(reply);
+
+        // Check if 3rd wish reached
+        if (wishes.length === 3) {
+          setTimeout(showFinalJudgment, 4000);
+        }
+      }
+    }
+
+    // 7. Final Judgment Climax
+    function showFinalJudgment() {
+      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+      document.getElementById('judgmentModal').classList.remove('hidden');
+
+      const avgGreed = Math.round(wishes.reduce((a, b) => a + b.stats.greed, 0) / 3);
+      const avgChaos = Math.round(wishes.reduce((a, b) => a + b.stats.chaos, 0) / 3);
+      const avgCreativity = Math.round(wishes.reduce((a, b) => a + b.stats.creativity, 0) / 3);
+
+      const verdict = avgGreed > 70 ? "👑 MAIN CHARACTER" : avgChaos > 65 ? "😂 CHAOTIC" : "🔥 GENIUS";
+      document.getElementById('verdictTag').textContent = verdict;
+      document.getElementById('verdictSpeech').textContent = 
+        `"After reviewing your three wishes, mortal... you are officially ${verdict}! May the cosmos grant you peace, because your wishes certainly won't!"`;
+
+      document.getElementById('statsBox').innerHTML = `
+        <div>Creativity: <b>${avgCreativity}%</b></div>
+        <div>Greed: <b>${avgGreed}%</b></div>
+        <div>Chaos: <b>${avgChaos}%</b></div>
+        <div>Regret Potential: <b>85%</b></div>
+      `;
+    }
+
+    // Microphone speech recognition fallback
+    function toggleMic() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) { alert("Microphone speech recognition not supported in this browser. Please type!"); return; }
+      const rec = new SR();
+      rec.lang = 'en-US';
+      rec.onstart = () => document.getElementById('micBtn').classList.add('bg-red-600');
+      rec.onresult = (e) => {
+        document.getElementById('userInput').value = e.results[0][0].transcript;
+        document.getElementById('micBtn').classList.remove('bg-red-600');
+      };
+      rec.onerror = () => document.getElementById('micBtn').classList.remove('bg-red-600');
+      rec.onend = () => document.getElementById('micBtn').classList.remove('bg-red-600');
+      rec.start();
+    }
+  </script>
 </body>
 </html>
