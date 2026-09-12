@@ -2,7 +2,7 @@
 
 
 
-# REGRETOS🤓
+# RegretOS🤓
 
 
 ## Basic Details
