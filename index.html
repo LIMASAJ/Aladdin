@@ -5,298 +5,374 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>✨ ALADDIN: THE THREE WISHES</title>
   
-  <!-- Fonts & Tailwind CSS CDN -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;800;900&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
 
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            arabian: {
-              dark: '#05040a',
-              gold: '#f5b041',
-              goldLight: '#ffd97d',
-              goldDark: '#b7791f',
-              purple: '#1a0b2e'
-            }
-          },
-          fontFamily: {
-            royal: ['Cinzel', 'serif'],
-            body: ['Quicksand', 'sans-serif']
-          }
-        }
+  <style>
+    body {
+      background: radial-gradient(circle at center, #1e0938 0%, #0c0418 60%, #030107 100%);
+      font-family: 'Quicksand', sans-serif;
+      overflow: hidden;
+    }
+    .font-royal { font-family: 'Cinzel Decorative', 'Cinzel', serif; }
+    .gold-glow {
+      text-shadow: 0 0 16px rgba(245, 176, 65, 0.8), 0 0 32px rgba(245, 176, 65, 0.4);
+    }
+    .cyan-glow {
+      filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.75)) drop-shadow(0 0 50px rgba(56, 189, 248, 0.4));
+    }
+    
+    /* Royal Arabian Border Frame */
+    .palace-arch {
+      box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.95), inset 0 0 20px rgba(245, 176, 65, 0.35);
+      border: 3px double rgba(245, 176, 65, 0.45);
+    }
+
+    /* Idle Bouncy Float Animation */
+    @keyframes genieShowmanFloat {
+      0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+      25% { transform: translateY(-14px) rotate(2deg) scale(1.02); }
+      50% { transform: translateY(-4px) rotate(-1.5deg) scale(0.99); }
+      75% { transform: translateY(-18px) rotate(2deg) scale(1.03); }
+    }
+    .genie-idle {
+      animation: genieShowmanFloat 4.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    }
+
+    /* Dynamic Speech Gestures & Body Movement */
+    @keyframes talkingBounce {
+      0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); }
+      20% { transform: translateY(-12px) scale(1.06) rotate(3deg); }
+      40% { transform: translateY(-4px) scale(1.02) rotate(-2deg); }
+      60% { transform: translateY(-16px) scale(1.08) rotate(4deg); }
+      80% { transform: translateY(-6px) scale(1.03) rotate(-1deg); }
+    }
+    .genie-talking {
+      animation: talkingBounce 0.65s ease-in-out infinite !important;
+    }
+
+    /* 5-Second Dramatic Emergence from Lamp Spout */
+    @keyframes eruptFromSpout {
+      0% { 
+        transform: translate(60px, 160px) scale(0.02) rotate(-60deg); 
+        opacity: 0; 
+        filter: blur(16px) brightness(3);
+      }
+      35% { 
+        transform: translate(30px, 60px) scale(0.35) rotate(25deg); 
+        opacity: 0.8; 
+        filter: blur(8px) brightness(2);
+      }
+      70% { 
+        transform: translate(0px, -30px) scale(1.18) rotate(-6deg); 
+        opacity: 1; 
+        filter: blur(0px) brightness(1.2);
+      }
+      85% { 
+        transform: translate(0px, 10px) scale(0.95) rotate(3deg); 
+      }
+      100% { 
+        transform: translate(0px, 0px) scale(1) rotate(0deg); 
+        opacity: 1;
+        filter: blur(0px) brightness(1);
       }
     }
-  </script>
-
-  <style>
-    body { background-color: #05040a; font-family: 'Quicksand', sans-serif; overflow: hidden; }
-    .gold-glow { text-shadow: 0 0 15px rgba(245, 176, 65, 0.7), 0 0 30px rgba(245, 176, 65, 0.4); }
-    @keyframes floatGentle {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
+    .erupting {
+      animation: eruptFromSpout 2.8s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
     }
-    .floating { animation: floatGentle 4s ease-in-out infinite; }
   </style>
 </head>
 
-<body class="w-screen h-screen flex flex-col justify-between p-4 md:p-6 text-slate-100 select-none">
-  <!-- Arabian Night Sky Canvas -->
+<body class="w-screen h-screen flex flex-col justify-between p-4 md:p-6 text-slate-100 select-none palace-arch relative">
+  <!-- Arabian Sky & Sparkle Physics Canvas -->
   <canvas id="skyCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
+  <canvas id="sparkleCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-30"></canvas>
 
-  <!-- TOP HEADER -->
-  <header class="relative z-20 flex items-center justify-between w-full max-w-5xl mx-auto">
-    <h1 class="font-royal text-xl md:text-2xl font-black text-arabian-goldLight gold-glow tracking-widest flex items-center gap-2">
-      ✨ ALADDIN <span class="text-xs text-amber-200/70 font-normal">THE THREE WISHES</span>
-    </h1>
+  <!-- TOP ROYAL HEADER -->
+  <header class="relative z-20 flex items-center justify-between w-full max-w-5xl mx-auto border-b border-amber-500/30 pb-3">
+    <div>
+      <h1 class="font-royal text-xl md:text-3xl font-black text-amber-300 gold-glow tracking-widest flex items-center gap-2">
+        👑 ALADDIN <span class="text-xs md:text-sm text-amber-200/80 font-normal font-sans">THE THREE WISHES</span>
+      </h1>
+      <p class="text-[10px] md:text-xs text-amber-300/60 uppercase tracking-widest mt-0.5">The Spectacular Cave of Wonders</p>
+    </div>
+
     <div class="flex items-center gap-3">
-      <div id="moodBadge" class="hidden px-3 py-1 rounded-full bg-black/60 border border-amber-400/40 text-xs font-royal text-amber-300">
-        MOOD: <span id="moodText">CURIOUS GENIE</span>
+      <div id="moodBadge" class="hidden px-4 py-1.5 rounded-full bg-black/70 border border-amber-400/50 text-xs font-royal text-amber-300 shadow-[0_0_15px_rgba(245,176,65,0.35)] flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+        MOOD: <span id="moodText" class="font-bold">PARTY TIME 🎉</span>
       </div>
-      <button id="muteBtn" onclick="toggleMute()" class="p-2 rounded-full bg-black/60 border border-amber-400/40 text-amber-300 hover:bg-amber-400 hover:text-black transition-all">
+      <button id="muteBtn" onclick="toggleMute()" class="p-2.5 rounded-full bg-black/70 border border-amber-400/50 text-amber-300 hover:bg-amber-400 hover:text-black transition-all shadow-md">
         🔊
       </button>
     </div>
   </header>
 
-  <!-- CENTER INTERACTIVE ARENA -->
-  <main class="relative z-10 flex-1 flex flex-col md:flex-row items-center justify-center gap-6 max-w-5xl mx-auto w-full">
-    <!-- Wish List Panel (Shown when Genie awakes) -->
-    <div id="wishPanel" class="hidden w-full md:w-72 bg-black/60 backdrop-blur-md border border-amber-400/30 rounded-2xl p-4 shadow-xl">
-      <div class="flex justify-between items-center mb-3 pb-2 border-b border-amber-400/20">
-        <span class="font-royal text-sm font-bold text-amber-300">YOUR WISHES</span>
-        <span id="wishCounter" class="text-xs px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-200">0/3</span>
+  <!-- CENTER ARENA: LAMP & GENIE STAGE -->
+  <main class="relative z-10 flex-1 flex flex-col md:flex-row items-center justify-center gap-8 max-w-5xl mx-auto w-full">
+    <!-- Royal Wishes Scroll -->
+    <div id="wishPanel" class="hidden w-full md:w-80 bg-black/75 backdrop-blur-xl border-2 border-amber-500/40 rounded-3xl p-5 shadow-[0_0_35px_rgba(0,0,0,0.85)]">
+      <div class="flex justify-between items-center mb-3 pb-2 border-b border-amber-500/30">
+        <span class="font-royal text-sm font-bold text-amber-300 tracking-wider">📜 YOUR 3 WISHES</span>
+        <span id="wishCounter" class="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-200 border border-amber-400/40 font-bold">0/3</span>
       </div>
-      <div class="space-y-2 text-xs" id="wishList">
-        <div id="slot1" class="p-2.5 rounded-xl border border-amber-400/40 bg-amber-400/10">✨ Wish #1 — READY TO WISH</div>
-        <div id="slot2" class="p-2.5 rounded-xl border border-slate-700 bg-slate-900/40 opacity-50">🔒 Wish #2 — LOCKED</div>
-        <div id="slot3" class="p-2.5 rounded-xl border border-slate-700 bg-slate-900/40 opacity-50">🔒 Wish #3 — LOCKED</div>
+
+      <div class="space-y-2.5 text-xs" id="wishList">
+        <div id="slot1" class="p-3 rounded-2xl border border-amber-400/50 bg-amber-400/10 text-amber-200 font-medium">✨ Wish #1 — HIT ME WITH YOUR BEST SHOT!</div>
+        <div id="slot2" class="p-3 rounded-2xl border border-slate-700/60 bg-slate-900/40 opacity-50 text-slate-400">🔒 Wish #2 — LOCKED IN THE VAULT</div>
+        <div id="slot3" class="p-3 rounded-2xl border border-slate-700/60 bg-slate-900/40 opacity-50 text-slate-400">🔒 Wish #3 — THE GRAND FINALE</div>
       </div>
-      <!-- What you could have wished for -->
-      <div id="altBox" class="hidden mt-3 p-2.5 rounded-xl bg-purple-950/40 border border-purple-400/30 text-[11px] text-purple-200">
-        <div class="font-bold text-amber-300 mb-1">WHAT YOU COULD HAVE WISHED FOR:</div>
-        <ul id="altList" class="list-disc list-inside text-slate-300 space-y-0.5"></ul>
+
+      <!-- Comedic "What you could have wished for" box -->
+      <div id="altBox" class="hidden mt-4 p-3.5 rounded-2xl bg-gradient-to-br from-purple-950/70 to-indigo-950/50 border border-purple-400/40 text-[11px] text-purple-200 shadow-inner">
+        <div class="font-bold text-amber-300 font-royal mb-1.5 flex items-center gap-1.5">
+          <span>🧞‍♂️</span> WHAT YOU COULD'VE HAD, KID:
+        </div>
+        <ul id="altList" class="list-disc list-inside text-slate-200 space-y-1 italic"></ul>
       </div>
     </div>
 
-    <!-- Center Display: Lamp & Genie -->
-    <div class="flex flex-col items-center justify-center relative min-h-[360px]">
+    <!-- Center Stage: Lamp & Erupting Genie -->
+    <div id="stageContainer" class="flex flex-col items-center justify-center relative min-h-[420px]">
       <!-- Rub Instruction & Gauge -->
       <div id="rubInstructions" class="text-center mb-4">
-        <p class="font-royal text-xl md:text-2xl text-amber-300 gold-glow font-bold animate-pulse">
-          Rub the lamp to awaken the Genie…
+        <p class="font-royal text-2xl md:text-3xl text-amber-300 gold-glow font-bold animate-pulse">
+          Rub the lamp to awaken the Genie!
         </p>
-        <p class="text-xs text-amber-200/70 mt-1">Drag your mouse or finger across the brass</p>
-        <div class="w-64 h-2.5 bg-black/60 border border-amber-400/60 rounded-full mx-auto mt-3 overflow-hidden">
-          <div id="rubBar" class="h-full bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-200 transition-all duration-100" style="width: 0%"></div>
+        <p class="text-xs md:text-sm text-amber-200/80 mt-1">Rub back and forth with mouse or finger — wake him up!</p>
+        
+        <div class="w-72 h-3.5 bg-black/85 border border-amber-500/60 rounded-full mx-auto mt-4 overflow-hidden shadow-[0_0_15px_rgba(245,176,65,0.4)] p-0.5">
+          <div id="rubBar" class="h-full rounded-full bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-200 transition-all duration-100" style="width: 0%"></div>
         </div>
       </div>
 
-      <!-- Lamp -->
-      <div id="lampWrapper" class="cursor-grab active:cursor-grabbing floating relative">
-        <svg id="lampSvg" width="340" height="200" viewBox="0 0 500 300" class="w-64 md:w-80 filter drop-shadow-[0_0_20px_rgba(245,176,65,0.4)]">
-          <defs>
-            <linearGradient id="goldBrass" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#ffd778" /><stop offset="35%" stopColor="#d4af37" /><stop offset="70%" stopColor="#fef08a" /><stop offset="100%" stopColor="#68470a" />
-            </linearGradient>
-          </defs>
-          <ellipse cx="250" cy="275" rx="85" ry="18" fill="url(#goldBrass)" stroke="#ffe082" />
-          <path d="M160,205 C110,185 105,130 190,120 C280,110 330,135 345,185 C350,215 310,235 250,235 Z" fill="url(#goldBrass)" stroke="#fff" stroke-width="1.5" />
-          <circle cx="250" cy="175" r="9" fill="#9f1239" stroke="#fef08a" stroke-width="2" />
-          <path d="M340,150 C380,140 430,90 445,45 C450,35 440,35 430,42 C400,65 345,115 315,135 Z" fill="url(#goldBrass)" stroke="#fef08a" stroke-width="1.5" />
-          <path d="M150,165 C85,145 60,65 125,50 C165,40 180,95 160,125 C145,145 130,130 145,100 C155,80 135,65 115,75 C85,90 105,135 140,155 Z" fill="url(#goldBrass)" stroke="#68470a" stroke-width="1.5" />
-          <path d="M220,120 C220,105 240,95 250,95 C260,95 280,105 280,120 Z" fill="url(#goldBrass)" stroke="#fff" />
-        </svg>
+      <!-- LAMP WRAPPER -->
+      <div id="lampWrapper" class="cursor-grab active:cursor-grabbing relative transition-all duration-700">
+        <img 
+          id="lampImg"
+          src="lamp.png" 
+          alt="Magical Arabian Lamp"
+          class="w-64 md:w-80 object-contain drop-shadow-[0_0_30px_rgba(245,176,65,0.65)] transition-transform duration-150"
+        />
+        <!-- Spout anchor point for smoke & sparkles -->
+        <div id="spoutPoint" class="absolute top-2 right-4 w-6 h-6 pointer-events-none"></div>
       </div>
 
-      <!-- Genie Character Rig (Hidden initially) -->
-      <div id="genieContainer" class="hidden flex-col items-center relative transition-all duration-1000">
-        <svg id="genieSvg" width="360" height="420" viewBox="0 0 400 480" class="w-64 md:w-80 floating filter drop-shadow-[0_0_30px_rgba(56,189,248,0.6)]">
-          <defs>
-            <linearGradient id="genieSkin" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#7dd3fc" /><stop offset="50%" stopColor="#38bdf8" /><stop offset="100%" stopColor="#0284c7" />
-            </linearGradient>
-            <linearGradient id="smokeTail" x1="50%" y1="0%" x2="50%" y2="100%">
-              <stop offset="0%" stopColor="#0284c7" /><stop offset="60%" stopColor="#38bdf8" stop-opacity="0.8" /><stop offset="100%" stopColor="#f5b041" stop-opacity="0" />
-            </linearGradient>
-            <linearGradient id="goldAcc" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#fef08a" /><stop offset="100%" stopColor="#a16207" />
-            </linearGradient>
-          </defs>
-
-          <!-- Smoke Tail -->
-          <path d="M175,340 C140,370 130,410 185,440 C240,470 200,480 200,480 C200,480 270,440 220,400 C170,360 215,350 225,340 Z" fill="url(#smokeTail)" />
-          
-          <!-- Torso & Arms -->
-          <path d="M130,195 C85,215 70,250 85,285 C95,305 110,295 105,275 C95,250 115,225 145,210 Z" fill="url(#genieSkin)" />
-          <path d="M270,195 C315,215 330,250 315,285 C305,305 290,295 295,275 C305,250 285,225 255,210 Z" fill="url(#genieSkin)" />
-          <rect x="78" y="260" width="22" height="24" rx="4" fill="url(#goldAcc)" />
-          <rect x="300" y="260" width="22" height="24" rx="4" fill="url(#goldAcc)" />
-          
-          <path d="M130,185 C125,260 160,335 200,340 C240,335 275,260 270,185 Z" fill="url(#genieSkin)" stroke="#0369a1" stroke-width="2" />
-          <path d="M132,185 Q165,260 170,320 L135,310 Z" fill="#881337" stroke="url(#goldAcc)" stroke-width="2" />
-          <path d="M268,185 Q235,260 230,320 L265,310 Z" fill="#881337" stroke="url(#goldAcc)" stroke-width="2" />
-
-          <!-- Head, Ears, Turban -->
-          <path d="M150,115 C150,60 250,60 250,115 C250,155 235,170 200,170 C165,170 150,155 150,115 Z" fill="url(#genieSkin)" />
-          <path d="M150,110 C130,105 110,85 125,75 C140,85 148,95 150,110 Z" fill="url(#genieSkin)" />
-          <path d="M250,110 C270,105 290,85 275,75 C260,85 252,95 250,110 Z" fill="url(#genieSkin)" />
-          <path d="M142,85 C140,40 260,40 258,85 Z" fill="#4c0519" stroke="url(#goldAcc)" stroke-width="3" />
-          <circle cx="200" cy="65" r="8" fill="url(#goldAcc)" />
-
-          <!-- Face Features -->
-          <g id="genieEyes">
-            <ellipse cx="178" cy="108" rx="8" ry="7" fill="#fff" />
-            <ellipse cx="222" cy="108" rx="8" ry="7" fill="#fff" />
-            <circle cx="178" cy="108" r="4" fill="#f59e0b" />
-            <circle cx="222" cy="108" r="4" fill="#f59e0b" />
-            <circle cx="178" cy="108" r="2" fill="#000" />
-            <circle cx="222" cy="108" r="2" fill="#000" />
-          </g>
-          <!-- Eyebrows -->
-          <path d="M165,96 Q180,88 192,94" stroke="#082f49" stroke-width="4" stroke-linecap="round" fill="none" />
-          <path d="M235,96 Q220,88 208,94" stroke="#082f49" stroke-width="4" stroke-linecap="round" fill="none" />
-          <!-- Nose & Beard -->
-          <path d="M200,105 L204,124 L196,126" stroke="#0369a1" stroke-width="2.5" fill="none" />
-          <path d="M195,152 C195,175 190,185 205,188 C215,188 210,175 205,152 Z" fill="#082f49" />
-
-          <!-- Dynamic Mouth (Lip Sync changes this path) -->
-          <path id="genieMouth" d="M182,138 Q200,150 220,136" stroke="#082f49" stroke-width="3" stroke-linecap="round" fill="none" />
-        </svg>
+      <!-- GENIE CHARACTER SPRITE (Pops Out directly above the lamp) -->
+      <div id="genieContainer" class="hidden flex-col items-center absolute -top-12 z-20 pointer-events-none">
+        <div id="genieSprite" class="relative genie-idle transition-transform duration-300">
+          <!-- Backlight Halo -->
+          <div class="absolute inset-0 rounded-full bg-gradient-to-t from-cyan-500/50 via-blue-500/30 to-amber-300/40 blur-3xl -z-10 animate-pulse"></div>
+          <img 
+            id="genieImg"
+            src="genie.png" 
+            alt="Fun-Loving Genie" 
+            class="w-72 md:w-96 max-h-[440px] object-contain cyan-glow select-none"
+          />
+        </div>
       </div>
     </div>
   </main>
 
-  <!-- BOTTOM: Subtitles & Voice/Text Inputs -->
+  <!-- BOTTOM ROYAL SUBTITLES & CONTROLS -->
   <footer class="relative z-20 flex flex-col items-center gap-3 w-full max-w-2xl mx-auto">
-    <!-- Subtitle Bar -->
-    <div id="subtitles" class="w-full bg-black/80 backdrop-blur-md border border-amber-400/40 rounded-2xl p-3 text-center text-sm md:text-base text-amber-100 italic min-h-[48px] flex items-center justify-center shadow-lg">
-      "Rub the magical lamp above to break my centuries of slumber..."
+    <!-- Subtitles -->
+    <div id="subtitles" class="w-full bg-black/85 backdrop-blur-md border border-amber-500/50 rounded-2xl p-3.5 text-center text-sm md:text-base text-amber-100 italic min-h-[54px] flex items-center justify-center shadow-[0_0_25px_rgba(0,0,0,0.85)] font-medium">
+      "Rub that golden kettle above to start the show!"
     </div>
 
-    <!-- Input Form -->
-    <form id="inputForm" onsubmit="handleSend(event)" class="hidden w-full items-center gap-2 bg-slate-950/90 border border-amber-400/50 rounded-full p-1.5 pl-4 shadow-xl">
-      <button type="button" id="micBtn" onclick="toggleMic()" class="p-2.5 rounded-full bg-amber-400/20 text-amber-300 hover:bg-amber-400 hover:text-black transition-all">
+    <!-- Voice / Text Input -->
+    <form id="inputForm" onsubmit="handleSend(event)" class="hidden w-full items-center gap-2 bg-black/95 border-2 border-amber-500/60 rounded-full p-2 pl-4 shadow-2xl">
+      <button type="button" id="micBtn" onclick="toggleMic()" class="p-3 rounded-full bg-amber-500/20 text-amber-300 hover:bg-amber-400 hover:text-black transition-all">
         🎙️
       </button>
-      <input type="text" id="userInput" placeholder="State your wish or speak to the Genie..." class="flex-1 bg-transparent border-none outline-none text-sm text-slate-100 placeholder-amber-200/40" />
-      <button type="submit" class="px-5 py-2.5 bg-gradient-to-r from-amber-600 to-amber-400 text-slate-950 font-bold rounded-full hover:brightness-110">
-        SEND
+      <input type="text" id="userInput" placeholder="Tell the Genie your wildest wish..." class="flex-1 bg-transparent border-none outline-none text-sm text-slate-100 placeholder-amber-200/40 font-medium" />
+      <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-300 text-slate-950 font-royal font-black rounded-full hover:brightness-110 active:scale-95 transition-all shadow-lg">
+        BOOM! ✨
       </button>
     </form>
   </footer>
 
   <!-- FINAL JUDGMENT MODAL -->
-  <div id="judgmentModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl">
-    <div class="bg-gradient-to-b from-slate-900 to-black border-2 border-amber-400 rounded-3xl p-6 md:p-8 max-w-lg w-full text-center shadow-2xl">
-      <div class="text-4xl mb-2">⚖️</div>
-      <h2 class="font-royal text-2xl font-bold text-amber-300 tracking-wider">THE GENIE HAS JUDGED YOU</h2>
-      <div id="verdictTag" class="inline-block my-3 px-5 py-1.5 rounded-full bg-amber-400/20 border border-amber-400 text-amber-300 font-royal font-black text-xl"></div>
-      <p id="verdictSpeech" class="text-xs md:text-sm text-amber-100/90 italic mb-4 leading-relaxed"></p>
+  <div id="judgmentModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-2xl">
+    <div class="bg-gradient-to-b from-slate-950 via-[#190733] to-black border-2 border-amber-400 rounded-3xl p-6 md:p-8 max-w-lg w-full text-center shadow-[0_0_65px_rgba(245,176,65,0.45)]">
+      <div class="text-6xl mb-2 animate-bounce">👑</div>
+      <h2 class="font-royal text-2xl md:text-3xl font-bold text-amber-300 tracking-wider">THE GRAND GENIE VERDICT!</h2>
+      <div id="verdictTag" class="inline-block my-4 px-6 py-2 rounded-full bg-amber-400/20 border-2 border-amber-400 text-amber-300 font-royal font-black text-xl md:text-2xl shadow-lg"></div>
+      <p id="verdictSpeech" class="text-xs md:text-sm text-amber-100/95 italic mb-5 leading-relaxed"></p>
 
-      <!-- Stats -->
-      <div id="statsBox" class="space-y-2 text-left bg-black/40 p-4 rounded-xl border border-amber-400/20 mb-5 text-xs text-amber-200"></div>
+      <div id="statsBox" class="space-y-2 text-left bg-black/60 p-4 rounded-2xl border border-amber-500/30 mb-6 text-xs text-amber-200 font-semibold"></div>
 
-      <button onclick="location.reload()" class="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-yellow-300 text-slate-950 font-royal font-black rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all">
-        🔮 RUB THE LAMP AGAIN
+      <button onclick="location.reload()" class="px-8 py-3 bg-gradient-to-r from-amber-500 via-yellow-300 to-amber-400 text-slate-950 font-royal font-black rounded-full shadow-[0_0_25px_rgba(245,176,65,0.6)] hover:scale-105 active:scale-95 transition-all">
+        🔮 ONE MORE ROUND! RUB AGAIN!
       </button>
     </div>
   </div>
 
-  <!-- SCRIPT LOGIC -->
   <script>
-    // 1. Arabian Sky Particle Animation
-    const canvas = document.getElementById('skyCanvas');
-    const ctx = canvas.getContext('2d');
-    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    // 1. Sky Canvas
+    const skyCanvas = document.getElementById('skyCanvas');
+    const skyCtx = skyCanvas.getContext('2d');
+    function resizeSky() { skyCanvas.width = window.innerWidth; skyCanvas.height = window.innerHeight; }
+    resizeSky();
+    window.addEventListener('resize', resizeSky);
 
-    const stars = Array.from({ length: 80 }, () => ({
-      x: Math.random() * canvas.width, y: Math.random() * (canvas.height * 0.7),
+    const stars = Array.from({ length: 90 }, () => ({
+      x: Math.random() * skyCanvas.width, y: Math.random() * (skyCanvas.height * 0.75),
       r: Math.random() * 2 + 0.5, alpha: Math.random()
     }));
 
     function drawSky() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      grad.addColorStop(0, '#04020a'); grad.addColorStop(0.5, '#0c071e'); grad.addColorStop(1, '#280c35');
-      ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      skyCtx.clearRect(0, 0, skyCanvas.width, skyCanvas.height);
+      const mx = skyCanvas.width * 0.86, my = skyCanvas.height * 0.16;
+      skyCtx.save(); skyCtx.shadowColor = '#ffe082'; skyCtx.shadowBlur = 40;
+      skyCtx.beginPath(); skyCtx.arc(mx, my, 40, 0, Math.PI * 2); skyCtx.fillStyle = '#fffde7'; skyCtx.fill();
+      skyCtx.globalCompositeOperation = 'destination-out';
+      skyCtx.beginPath(); skyCtx.arc(mx + 15, my - 10, 35, 0, Math.PI * 2); skyCtx.fill();
+      skyCtx.restore();
 
-      // Moon
-      const mx = canvas.width * 0.85, my = canvas.height * 0.18;
-      ctx.save(); ctx.shadowColor = '#fef08a'; ctx.shadowBlur = 35;
-      ctx.beginPath(); ctx.arc(mx, my, 40, 0, Math.PI * 2); ctx.fillStyle = '#fff9db'; ctx.fill();
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.beginPath(); ctx.arc(mx + 15, my - 8, 35, 0, Math.PI * 2); ctx.fill();
-      ctx.restore();
-
-      // Stars
       stars.forEach(s => {
-        s.alpha += (Math.random() - 0.5) * 0.05;
-        s.alpha = Math.max(0.1, Math.min(1, s.alpha));
-        ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha})`;
-        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+        s.alpha += (Math.random() - 0.5) * 0.04;
+        s.alpha = Math.max(0.15, Math.min(1, s.alpha));
+        skyCtx.fillStyle = `rgba(255, 235, 170, ${s.alpha})`;
+        skyCtx.beginPath(); skyCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2); skyCtx.fill();
       });
       requestAnimationFrame(drawSky);
     }
     drawSky();
 
-    // 2. Procedural Web Audio (Arabian Chords + Friction)
+    // 2. High-Energy Sparkle & Spout Explosion Engine
+    const spCanvas = document.getElementById('sparkleCanvas');
+    const spCtx = spCanvas.getContext('2d');
+    function resizeSp() { spCanvas.width = window.innerWidth; spCanvas.height = window.innerHeight; }
+    resizeSp();
+    window.addEventListener('resize', resizeSp);
+
+    let sparkles = [];
+    function emitSpoutSparkles(count = 5, isBurst = false) {
+      const spout = document.getElementById('spoutPoint').getBoundingClientRect();
+      const originX = spout.left + spout.width / 2;
+      const originY = spout.top + spout.height / 2;
+
+      for (let i = 0; i < count; i++) {
+        sparkles.push({
+          x: originX + (Math.random() - 0.5) * 16,
+          y: originY + (Math.random() - 0.5) * 16,
+          vx: isBurst ? (Math.random() - 0.5) * 18 : (Math.random() - 0.3) * 6,
+          vy: isBurst ? -Math.random() * 16 - 4 : -Math.random() * 7 - 3,
+          size: Math.random() * 4.5 + 2,
+          color: Math.random() > 0.4 ? '#fcd34d' : '#38bdf8',
+          life: 1,
+          decay: Math.random() * 0.02 + 0.015
+        });
+      }
+    }
+
+    function renderSparkles() {
+      spCtx.clearRect(0, 0, spCanvas.width, spCanvas.height);
+      for (let i = sparkles.length - 1; i >= 0; i--) {
+        const p = sparkles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.15; // Gravity
+        p.life -= p.decay;
+
+        if (p.life <= 0) {
+          sparkles.splice(i, 1);
+          continue;
+        }
+
+        spCtx.save();
+        spCtx.globalAlpha = p.life;
+        spCtx.shadowColor = p.color;
+        spCtx.shadowBlur = 12;
+        spCtx.fillStyle = p.color;
+
+        // Draw 4-point sparkle star
+        spCtx.beginPath();
+        spCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        spCtx.fill();
+        spCtx.restore();
+      }
+      requestAnimationFrame(renderSparkles);
+    }
+    renderSparkles();
+
+    // 3. Web Audio Fanfare & SFX
     let audioCtx = null;
     let muted = false;
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') audioCtx.resume();
     }
+    
     function playRubSound(prog) {
       if (muted) return;
       initAudio();
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(200 + prog * 4, audioCtx.currentTime);
+      osc.frequency.setValueAtTime(220 + prog * 4.5, audioCtx.currentTime);
       gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
       gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
       osc.connect(gain); gain.connect(audioCtx.destination);
       osc.start(); osc.stop(audioCtx.currentTime + 0.1);
     }
-    function playEmergenceSound() {
+
+    function playEmergenceFanfare() {
       if (muted) return;
       initAudio();
-      [140, 293, 370, 440, 587].forEach((f, i) => {
+      const fanfare = [
+        { f: 146.83, t: 0.0, d: 2.5 },
+        { f: 293.66, t: 0.2, d: 0.4 },
+        { f: 311.13, t: 0.6, d: 0.4 },
+        { f: 369.99, t: 1.0, d: 0.6 },
+        { f: 440.00, t: 1.6, d: 0.8 },
+        { f: 587.33, t: 2.4, d: 1.2 },
+        { f: 739.99, t: 3.4, d: 1.6 }
+      ];
+
+      fanfare.forEach(note => {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.frequency.setValueAtTime(f, audioCtx.currentTime + i * 0.3);
-        gain.gain.setValueAtTime(0.12, audioCtx.currentTime + i * 0.3);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.3 + 1.2);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(audioCtx.currentTime + i * 0.3);
-        osc.stop(audioCtx.currentTime + i * 0.3 + 1.3);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(note.f, audioCtx.currentTime + note.t);
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1200, audioCtx.currentTime);
+
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime + note.t);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + note.t + note.d);
+
+        osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + note.t);
+        osc.stop(audioCtx.currentTime + note.t + note.d + 0.1);
       });
     }
+
     function toggleMute() {
       muted = !muted;
       document.getElementById('muteBtn').textContent = muted ? '🔇' : '🔊';
       if (muted) window.speechSynthesis.cancel();
     }
 
-    // 3. Lamp Rubbing Mechanic
+    // 4. Lamp Rubbing Mechanic & Spout Sparkles
     let rubProgress = 0;
     let isRubbing = false;
     let lastX = 0, lastY = 0;
     const lampWrapper = document.getElementById('lampWrapper');
+    const lampImg = document.getElementById('lampImg');
 
     function onPointerDown(e) {
       isRubbing = true;
       lastX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
       lastY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
     }
+
     function onPointerMove(e) {
       if (!isRubbing || rubProgress >= 100) return;
       const x = e.clientX || (e.touches && e.touches[0].clientX) || 0;
@@ -304,13 +380,22 @@
       const dist = Math.abs(x - lastX) + Math.abs(y - lastY);
       if (dist > 10) {
         lastX = x; lastY = y;
-        rubProgress = Math.min(100, rubProgress + 2.5);
+        rubProgress = Math.min(100, rubProgress + 2.4);
         document.getElementById('rubBar').style.width = rubProgress + '%';
         playRubSound(rubProgress);
+
+        // Emit sparkles from spout on rub
+        emitSpoutSparkles(Math.floor(rubProgress / 20) + 2);
+        lampImg.style.transform = `rotate(${(Math.random() - 0.5) * 8}deg) scale(1.06)`;
+
         if (rubProgress >= 100) startAwakening();
       }
     }
-    function onPointerUp() { isRubbing = false; }
+
+    function onPointerUp() { 
+      isRubbing = false; 
+      lampImg.style.transform = 'rotate(0deg) scale(1)';
+    }
 
     lampWrapper.addEventListener('mousedown', onPointerDown);
     window.addEventListener('mousemove', onPointerMove);
@@ -319,56 +404,97 @@
     window.addEventListener('touchmove', onPointerMove);
     window.addEventListener('touchend', onPointerUp);
 
-    // 4. 5-Second Awakening Sequence
+    // 5. Grand 5-Second Awakening Sequence (Pop out from lamp)
     function startAwakening() {
       document.getElementById('rubInstructions').classList.add('hidden');
-      lampWrapper.classList.add('scale-50', 'opacity-60', 'transition-all', 'duration-1000');
-      playEmergenceSound();
+      playEmergenceFanfare();
 
-      document.getElementById('subtitles').textContent = "💨 The brass heats up... smoke erupts from the spout!";
+      // Continuous spout sparkle burst
+      let burstInterval = setInterval(() => emitSpoutSparkles(8, true), 120);
 
-      setTimeout(() => {
-        document.getElementById('genieContainer').classList.remove('hidden');
-        document.getElementById('genieContainer').classList.add('animate-pulse');
-        document.getElementById('subtitles').textContent = "🌌 A majestic silhouette stretches its arms after 10,000 years...";
-      }, 2000);
+      document.getElementById('subtitles').textContent = "💥 WHOOSH! Gold sparkles and sapphire smoke burst from the spout!";
 
       setTimeout(() => {
-        document.getElementById('genieContainer').classList.remove('animate-pulse');
+        // Pop Genie Out
+        const genieContainer = document.getElementById('genieContainer');
+        const genieSprite = document.getElementById('genieSprite');
+        genieContainer.classList.remove('hidden');
+        genieContainer.classList.add('flex');
+        genieSprite.classList.remove('genie-idle');
+        genieSprite.classList.add('erupting');
+
+        // Confetti burst from spout
+        confetti({ particleCount: 90, spread: 80, origin: { y: 0.65 } });
+        document.getElementById('subtitles').textContent = "🌌 Look at him go! Emerging from the spout with cosmic stardust!";
+      }, 1800);
+
+      setTimeout(() => {
+        clearInterval(burstInterval);
+        const genieSprite = document.getElementById('genieSprite');
+        genieSprite.classList.remove('erupting');
+        genieSprite.classList.add('genie-idle');
+
+        lampWrapper.classList.add('scale-75', 'opacity-70', 'translate-y-28');
         document.getElementById('wishPanel').classList.remove('hidden');
         document.getElementById('inputForm').classList.remove('hidden');
         document.getElementById('inputForm').classList.add('flex');
         document.getElementById('moodBadge').classList.remove('hidden');
 
-        const introText = "FINALLY! Ten thousand years in a brass kettle with ZERO legroom! Look at you, mortal. You have THREE wishes. Not four! And don't try the 'more wishes' cheat. Now... what ridiculous thing are we wishing for first?";
-        genieSpeak(introText);
+        confetti({ particleCount: 140, spread: 100, origin: { y: 0.45 } });
+
+        const energeticIntro = "WAHOOOO! Ten thousand years will give ya SUCH a crick in the neck! Hang on, stretch the back, shake off the brass dust... BAM! How ya doin', kid?! Master of the lamp, ruler of the universe! You get THREE wishes! Count 'em! Uno, dos, tres! No returns, no exchanges, and no wishing for more wishes! So come on... what crazy dream are we cooking up first?!";
+        genieSpeak(energeticIntro, 1.05, 1.15);
       }, 5000);
     }
 
-    // 5. Speech Synthesis & Mouth Lip-sync
-    function genieSpeak(text) {
+    // 6. Speaking & Animation Sync
+    function genieSpeak(text, pitchMultiplier = 1.0, rateMultiplier = 1.05) {
       document.getElementById('subtitles').textContent = `"${text}"`;
       if (muted || !('speechSynthesis' in window)) return;
 
       window.speechSynthesis.cancel();
       const utt = new SpeechSynthesisUtterance(text);
-      utt.pitch = 0.92;
-      utt.rate = 1.05;
 
-      const mouth = document.getElementById('genieMouth');
-      let interval = setInterval(() => {
-        mouth.setAttribute('d', Math.random() > 0.5 ? "M182,138 Q200,165 218,138 Q200,146 182,138 Z" : "M182,138 Q200,150 220,136");
-      }, 130);
+      const voices = window.speechSynthesis.getVoices();
+      const funVoice = voices.find(v => 
+        v.name.includes("Google US English") || 
+        v.name.includes("Daniel") || 
+        v.name.includes("Natural") || 
+        v.name.includes("Arthur") ||
+        (v.lang.startsWith("en") && !v.name.includes("Zira"))
+      ) || voices[0];
+
+      if (funVoice) utt.voice = funVoice;
+      utt.pitch = 1.08 * pitchMultiplier;
+      utt.rate = 1.12 * rateMultiplier;
+
+      const sprite = document.getElementById('genieSprite');
+
+      // Add dynamic bounce & sparkle particles while speaking
+      let talkSparkleInterval = null;
+      utt.onstart = () => {
+        sprite.classList.remove('genie-idle');
+        sprite.classList.add('genie-talking');
+        talkSparkleInterval = setInterval(() => emitSpoutSparkles(2), 250);
+      };
 
       utt.onend = () => {
-        clearInterval(interval);
-        mouth.setAttribute('d', "M182,138 Q200,150 220,136");
+        sprite.classList.remove('genie-talking');
+        sprite.classList.add('genie-idle');
+        if (talkSparkleInterval) clearInterval(talkSparkleInterval);
       };
+
       window.speechSynthesis.speak(utt);
     }
 
-    // 6. Conversational Brain & Wish Scoring
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+    }
+
+    // 7. Fun-Loving Dialogue Engine & Wish Judge
     let wishes = [];
+    const funMoods = ["PARTY TIME 🎉", "HYPED UP ⚡", "LOVING IT 😎", "GENIE APPROVED ✨"];
+
     function handleSend(e) {
       e.preventDefault();
       const input = document.getElementById('userInput');
@@ -376,80 +502,111 @@
       if (!text) return;
       input.value = '';
 
+      const lower = text.toLowerCase();
+
+      if (lower.includes("more wishes") || lower.includes("infinite wishes")) {
+        document.getElementById('moodText').textContent = "NICE TRY, PAL 😂";
+        genieSpeak("AHAHAHA! Oh, look at you, trying the oldest hustle in the magic carpet book! Nice try, kid, but the magical union contract says strictly THREE! Try again!");
+        return;
+      }
+
+      if (lower.includes("free you") || lower.includes("set you free")) {
+        document.getElementById('moodText').textContent = "TEARING UP 🥹";
+        genieSpeak("Wait... set me free?! For real?! Aw, man, you're gonna make a giant blue guy cry right into his turban! That is legendary! You got a heart of gold, kid!");
+        return;
+      }
+
       if (wishes.length < 3) {
-        // Record as wish
         const wishNumber = wishes.length + 1;
         const stats = {
-          creativity: Math.floor(Math.random() * 40) + 40,
-          greed: text.toLowerCase().includes('money') || text.toLowerCase().includes('rich') ? 95 : Math.floor(Math.random() * 50) + 30,
-          chaos: Math.floor(Math.random() * 50) + 45
+          creativity: Math.floor(Math.random() * 35) + 65,
+          greed: (lower.includes('money') || lower.includes('rich') || lower.includes('billion')) ? 98 : Math.floor(Math.random() * 45) + 30,
+          chaos: Math.floor(Math.random() * 50) + 50
         };
         wishes.push({ text, stats });
 
-        // Update slots
         const currentSlot = document.getElementById(`slot${wishNumber}`);
-        currentSlot.className = "p-2.5 rounded-xl border border-emerald-500/50 bg-emerald-950/40";
-        currentSlot.innerHTML = `<span class="text-emerald-400 font-bold">✓ Wish #${wishNumber}:</span> "${text}"`;
+        currentSlot.className = "p-3 rounded-2xl border border-emerald-400/60 bg-emerald-950/60 text-emerald-200 font-semibold";
+        currentSlot.innerHTML = `<span class="text-amber-300 font-bold">✨ Wish #${wishNumber} GRANTED:</span> "${text}"`;
 
         if (wishNumber < 3) {
           const nextSlot = document.getElementById(`slot${wishNumber + 1}`);
-          nextSlot.className = "p-2.5 rounded-xl border border-amber-400/40 bg-amber-400/10";
-          nextSlot.innerHTML = `✨ Wish #${wishNumber + 1} — READY TO WISH`;
+          nextSlot.className = "p-3 rounded-2xl border border-amber-400/50 bg-amber-400/15 text-amber-200";
+          nextSlot.innerHTML = `✨ Wish #${wishNumber + 1} — WHAT'S NEXT, BOSS?`;
         }
         document.getElementById('wishCounter').textContent = `${wishes.length}/3`;
+        document.getElementById('moodText').textContent = funMoods[Math.floor(Math.random() * funMoods.length)];
 
-        // "What you could have wished for"
         document.getElementById('altBox').classList.remove('hidden');
-        document.getElementById('altList').innerHTML = `
-          <li>Unlimited flying Persian rugs with GPS</li>
-          <li>A pizza volcano that never cools down</li>
-        `;
+        if (lower.includes('money') || lower.includes('rich')) {
+          document.getElementById('altList').innerHTML = `
+            <li>A diamond-encrusted camel with turbo nitrous boosters!</li>
+            <li>Making it rain pure 24-karat gold falafel coins!</li>
+          `;
+        } else {
+          document.getElementById('altList').innerHTML = `
+            <li>A supersonic flying Persian rug with heated seats!</li>
+            <li>A personal 50-piece brass band following you everywhere!</li>
+          `;
+        }
 
-        const reply = `Wish #${wishNumber} is sealed! "${text}". Greed level: ${stats.greed}%. Frankly, I've heard wiser wishes from camel merchants, but so be it!`;
-        genieSpeak(reply);
+        let funReaction = "";
+        if (stats.greed > 85) {
+          funReaction = `AHAHAHA! Cash, baby, CASH! Ding ding ding! Wish #${wishNumber} is LOCKED IN! "${text}". Going big or going home, huh? I respect the hustle!`;
+        } else if (stats.creativity > 80) {
+          funReaction = `OH, NOW WE'RE TALKING! Wish #${wishNumber} granted: "${text}"! That is what I call grade-A pure Genie entertainment! Boom baby!`;
+        } else {
+          funReaction = `ALAKAZAM! Wish #${wishNumber} is in the books! "${text}"! You ask, the big blue guy delivers!`;
+        }
 
-        // Check if 3rd wish reached
+        confetti({ particleCount: 75, spread: 70, origin: { y: 0.55 } });
+        emitSpoutSparkles(25, true);
+        genieSpeak(funReaction, 1.1, 1.15);
+
         if (wishes.length === 3) {
-          setTimeout(showFinalJudgment, 4000);
+          setTimeout(showFinalJudgment, 4800);
         }
       }
     }
 
-    // 7. Final Judgment Climax
+    // 8. Grand Finale Climax
     function showFinalJudgment() {
-      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+      confetti({ particleCount: 180, spread: 100, origin: { y: 0.5 } });
       document.getElementById('judgmentModal').classList.remove('hidden');
 
       const avgGreed = Math.round(wishes.reduce((a, b) => a + b.stats.greed, 0) / 3);
       const avgChaos = Math.round(wishes.reduce((a, b) => a + b.stats.chaos, 0) / 3);
       const avgCreativity = Math.round(wishes.reduce((a, b) => a + b.stats.creativity, 0) / 3);
 
-      const verdict = avgGreed > 70 ? "👑 MAIN CHARACTER" : avgChaos > 65 ? "😂 CHAOTIC" : "🔥 GENIUS";
+      const verdict = avgGreed > 75 ? "👑 CERTIFIED HIGH ROLLER!" : avgChaos > 70 ? "🎉 PURE PARTY ANIMAL!" : "🔥 ABSOLUTE COSMIC LEGEND!";
       document.getElementById('verdictTag').textContent = verdict;
-      document.getElementById('verdictSpeech').textContent = 
-        `"After reviewing your three wishes, mortal... you are officially ${verdict}! May the cosmos grant you peace, because your wishes certainly won't!"`;
+      
+      const finaleSpeech = `"WELL, PACK MY BAGS AND SEND ME TO AGRABAH! That was the most fun I've had in ten thousand years! You are officially: ${verdict}! Enjoy the magic, kid, you've earned it!"`;
+      document.getElementById('verdictSpeech').textContent = finaleSpeech;
 
       document.getElementById('statsBox').innerHTML = `
-        <div>Creativity: <b>${avgCreativity}%</b></div>
-        <div>Greed: <b>${avgGreed}%</b></div>
-        <div>Chaos: <b>${avgChaos}%</b></div>
-        <div>Regret Potential: <b>85%</b></div>
+        <div class="flex justify-between"><span>Creativity:</span> <span class="text-cyan-300 font-bold">${avgCreativity}%</span></div>
+        <div class="flex justify-between"><span>Greed Index:</span> <span class="text-red-300 font-bold">${avgGreed}%</span></div>
+        <div class="flex justify-between"><span>Chaos & Fun Factor:</span> <span class="text-amber-300 font-bold">${avgChaos}%</span></div>
+        <div class="flex justify-between"><span>Genie Friendship Rating:</span> <span class="text-emerald-300 font-bold">100/100! 🌟</span></div>
       `;
+
+      genieSpeak(finaleSpeech, 1.12, 1.1);
     }
 
-    // Microphone speech recognition fallback
+    // Voice recognition
     function toggleMic() {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SR) { alert("Microphone speech recognition not supported in this browser. Please type!"); return; }
+      if (!SR) { alert("Microphone not supported on this browser. Type your wish!"); return; }
       const rec = new SR();
       rec.lang = 'en-US';
-      rec.onstart = () => document.getElementById('micBtn').classList.add('bg-red-600');
+      rec.onstart = () => document.getElementById('micBtn').classList.add('bg-red-600', 'animate-pulse');
       rec.onresult = (e) => {
         document.getElementById('userInput').value = e.results[0][0].transcript;
-        document.getElementById('micBtn').classList.remove('bg-red-600');
+        document.getElementById('micBtn').classList.remove('bg-red-600', 'animate-pulse');
       };
-      rec.onerror = () => document.getElementById('micBtn').classList.remove('bg-red-600');
-      rec.onend = () => document.getElementById('micBtn').classList.remove('bg-red-600');
+      rec.onerror = () => document.getElementById('micBtn').classList.remove('bg-red-600', 'animate-pulse');
+      rec.onend = () => document.getElementById('micBtn').classList.remove('bg-red-600', 'animate-pulse');
       rec.start();
     }
   </script>
